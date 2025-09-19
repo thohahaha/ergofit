@@ -1,0 +1,7 @@
+{
+  "name": "ergofit",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
