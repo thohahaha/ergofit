@@ -35,3 +35,437 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* ErgoFit Global Styles */
+:root {
+  /* Color Palette */
+  --ergofit-primary: #6C63FF;
+  --ergofit-secondary: #764ba2;
+  --ergofit-accent: #9c88ff;
+  --ergofit-dark: #4a148c;
+  --ergofit-light: #e1bee7;
+  --ergofit-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  /* Status Colors */
+  --ergofit-success: #10dc60;
+  --ergofit-warning: #ffce00;
+  --ergofit-danger: #f04141;
+  --ergofit-info: #0cd1e8;
+
+  /* Card Styling Variables */
+  --ergofit-card-radius: 16px;
+  --ergofit-card-radius-sm: 12px;
+  --ergofit-card-radius-lg: 20px;
+  --ergofit-card-shadow: 0 8px 32px rgba(103, 58, 183, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+  --ergofit-card-shadow-hover: 0 12px 40px rgba(103, 58, 183, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
+  --ergofit-card-background: rgba(255, 255, 255, 0.95);
+  --ergofit-card-background-alt: rgba(255, 255, 255, 0.7);
+  --ergofit-card-border: 1px solid rgba(255, 255, 255, 0.2);
+
+  /* Spacing Variables */
+  --ergofit-spacing-xs: 4px;
+  --ergofit-spacing-sm: 8px;
+  --ergofit-spacing-md: 16px;
+  --ergofit-spacing-lg: 24px;
+  --ergofit-spacing-xl: 32px;
+  --ergofit-spacing-xxl: 48px;
+
+  /* Typography */
+  --ergofit-font-size-xs: 0.75rem;
+  --ergofit-font-size-sm: 0.85rem;
+  --ergofit-font-size-md: 1rem;
+  --ergofit-font-size-lg: 1.2rem;
+  --ergofit-font-size-xl: 1.5rem;
+  --ergofit-font-size-xxl: 2rem;
+  --ergofit-font-size-display: 2.5rem;
+
+  /* Breakpoints */
+  --ergofit-breakpoint-sm: 480px;
+  --ergofit-breakpoint-md: 768px;
+  --ergofit-breakpoint-lg: 1024px;
+  --ergofit-breakpoint-xl: 1200px;
+}
+
+/* Global Card Styles */
+.ergofit-card {
+  margin: var(--ergofit-spacing-md) var(--ergofit-spacing-sm);
+  border-radius: var(--ergofit-card-radius);
+  background: var(--ergofit-card-background);
+  backdrop-filter: blur(20px);
+  border: var(--ergofit-card-border);
+  box-shadow: var(--ergofit-card-shadow);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.ergofit-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ergofit-primary), var(--ergofit-accent));
+}
+
+.ergofit-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ergofit-card-shadow-hover);
+}
+
+/* Card Header Styles */
+.ergofit-card-header,
+.ergofit-card ion-card-header {
+  padding: var(--ergofit-spacing-md) var(--ergofit-spacing-lg) var(--ergofit-spacing-sm) var(--ergofit-spacing-lg);
+}
+
+.ergofit-card-title,
+.ergofit-card ion-card-title {
+  color: var(--ergofit-dark);
+  font-weight: 600;
+  font-size: var(--ergofit-font-size-md);
+  margin-bottom: 0;
+}
+
+/* Card Content Styles */
+.ergofit-card-content,
+.ergofit-card ion-card-content {
+  padding: var(--ergofit-spacing-sm) var(--ergofit-spacing-lg) var(--ergofit-spacing-lg) var(--ergofit-spacing-lg);
+  color: #333;
+}
+
+/* Alternative Card Styles */
+.ergofit-card-alt {
+  background: var(--ergofit-card-background-alt);
+  border-radius: var(--ergofit-card-radius-sm);
+  box-shadow: 0 4px 16px rgba(103, 58, 183, 0.1);
+}
+
+.ergofit-card-compact {
+  margin: var(--ergofit-spacing-sm);
+  border-radius: var(--ergofit-card-radius-sm);
+}
+
+.ergofit-card-large {
+  border-radius: var(--ergofit-card-radius-lg);
+  padding: var(--ergofit-spacing-xl);
+}
+
+/* Grid System */
+.ergofit-grid {
+  margin: 0;
+  padding: 0 var(--ergofit-spacing-sm);
+  display: grid;
+  gap: var(--ergofit-spacing-sm);
+}
+
+.ergofit-grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.ergofit-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.ergofit-grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.ergofit-grid-auto {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.ergofit-row {
+  margin: 0;
+  gap: var(--ergofit-spacing-sm);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ergofit-col {
+  padding: var(--ergofit-spacing-xs);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ergofit-col .ergofit-card {
+  flex: 1;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ergofit-col .ergofit-card .ergofit-card-content,
+.ergofit-col .ergofit-card ion-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Content Layout */
+.ergofit-content {
+  --background: transparent;
+  --padding-top: var(--ergofit-spacing-lg);
+  --padding-bottom: var(--ergofit-spacing-lg);
+  --padding-start: 0;
+  --padding-end: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  min-height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure all page content is below header */
+ion-content {
+  z-index: 1;
+}
+
+/* Fix any potential overlap issues */
+ion-content::part(scroll) {
+  z-index: 1;
+}
+
+/* Metric Display Components */
+.ergofit-metric {
+  text-align: center;
+  padding: var(--ergofit-spacing-md);
+}
+
+.ergofit-metric-large {
+  padding: var(--ergofit-spacing-lg);
+}
+
+.ergofit-metric h1, .ergofit-metric h2 {
+  color: var(--ergofit-primary);
+  font-weight: 700;
+  margin: var(--ergofit-spacing-sm) 0 var(--ergofit-spacing-xs) 0;
+}
+
+.ergofit-metric h1 {
+  font-size: var(--ergofit-font-size-display);
+  text-shadow: 0 2px 4px rgba(108, 99, 255, 0.3);
+}
+
+.ergofit-metric h2 {
+  font-size: var(--ergofit-font-size-xxl);
+}
+
+.ergofit-metric p {
+  color: #666;
+  font-weight: 500;
+  font-size: var(--ergofit-font-size-sm);
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Status Indicators */
+.ergofit-status-success {
+  color: var(--ergofit-success) !important;
+}
+
+.ergofit-status-warning {
+  color: var(--ergofit-warning) !important;
+}
+
+.ergofit-status-danger {
+  color: var(--ergofit-danger) !important;
+}
+
+/* Warning Banner */
+.ergofit-warning-banner {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.9), rgba(255, 152, 0, 0.9));
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: var(--ergofit-card-radius-sm);
+  padding: var(--ergofit-spacing-md);
+  margin: var(--ergofit-spacing-md) var(--ergofit-spacing-sm);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(255, 193, 7, 0.2);
+  display: flex;
+  align-items: center;
+  gap: var(--ergofit-spacing-sm);
+}
+
+.ergofit-warning-banner ion-icon {
+  font-size: var(--ergofit-font-size-lg);
+}
+
+.ergofit-warning-banner span {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Progress Components */
+.ergofit-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ergofit-spacing-lg);
+}
+
+.ergofit-progress-item {
+  width: 100%;
+}
+
+.ergofit-progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--ergofit-spacing-sm);
+  font-weight: 500;
+}
+
+.ergofit-progress-value {
+  font-weight: 600;
+  color: var(--ergofit-primary);
+}
+
+/* Interactive Elements */
+.ergofit-interactive {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.ergofit-interactive:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* Utility Classes */
+.ergofit-text-center {
+  text-align: center;
+}
+
+.ergofit-text-left {
+  text-align: left;
+}
+
+.ergofit-text-right {
+  text-align: right;
+}
+
+.ergofit-flex {
+  display: flex;
+}
+
+.ergofit-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ergofit-flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ergofit-full-width {
+  width: 100%;
+}
+
+.ergofit-full-height {
+  height: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .ergofit-grid {
+    padding: 0 var(--ergofit-spacing-xs);
+    gap: var(--ergofit-spacing-xs);
+  }
+
+  .ergofit-grid-2,
+  .ergofit-grid-3,
+  .ergofit-grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .ergofit-card {
+    margin: var(--ergofit-spacing-sm) var(--ergofit-spacing-xs);
+    border-radius: var(--ergofit-card-radius-sm);
+  }
+
+  .ergofit-card-header,
+  .ergofit-card ion-card-header {
+    padding: var(--ergofit-spacing-sm) var(--ergofit-spacing-md);
+  }
+
+  .ergofit-card-content,
+  .ergofit-card ion-card-content {
+    padding: var(--ergofit-spacing-xs) var(--ergofit-spacing-md) var(--ergofit-spacing-md);
+  }
+
+  .ergofit-metric h1 {
+    font-size: var(--ergofit-font-size-xxl);
+  }
+
+  .ergofit-metric h2 {
+    font-size: var(--ergofit-font-size-xl);
+  }
+
+  .ergofit-warning-banner {
+    margin: var(--ergofit-spacing-sm) var(--ergofit-spacing-xs);
+    padding: var(--ergofit-spacing-sm);
+    flex-direction: column;
+    text-align: center;
+    gap: var(--ergofit-spacing-xs);
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .ergofit-grid-3,
+  .ergofit-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ergofit-progress-section {
+    flex-direction: row;
+    gap: var(--ergofit-spacing-xl);
+  }
+
+  .ergofit-progress-item {
+    flex: 1;
+  }
+}
+
+@media (min-width: 769px) {
+  .ergofit-progress-section {
+    flex-direction: row;
+    gap: var(--ergofit-spacing-xl);
+  }
+
+  .ergofit-progress-item {
+    flex: 1;
+  }
+
+  .ergofit-grid {
+    padding: 0 var(--ergofit-spacing-md);
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .ergofit-card {
+    --ergofit-card-background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .ergofit-card-title,
+  .ergofit-card ion-card-title {
+    color: var(--ergofit-light);
+  }
+
+  .ergofit-card-content,
+  .ergofit-card ion-card-content {
+    color: #e0e0e0;
+  }
+
+  .ergofit-metric p {
+    color: #b0b0b0;
+  }
+}
