@@ -36,7 +36,7 @@ import {
     IonBadge
   ],
   template: `
-    <ion-content class="ergofit-content">
+    <ion-content class="ergofit-content" [fullscreen]="true">
       <!-- Chart Canvas -->
       <div class="ergofit-card">
         <div class="ergofit-card-header">
@@ -113,6 +113,38 @@ import {
     </ion-content>
   `,
   styles: [`
+    :host {
+      display: block;
+      min-height: 100vh;
+      background: var(--ergofit-background) !important;
+    }
+
+    ion-content {
+      --background: var(--ergofit-background) !important;
+      background: var(--ergofit-background) !important;
+    }
+
+    ion-content::part(background) {
+      background: var(--ergofit-background) !important;
+    }
+
+    ion-content::part(scroll) {
+      background: var(--ergofit-background) !important;
+    }
+
+    /* Force card backgrounds to be white */
+    .ergofit-card,
+    div.ergofit-card,
+    ion-content .ergofit-card {
+      background: white !important;
+      background-color: white !important;
+    }
+
+    .ergofit-card-title,
+    .ergofit-card h3 {
+      color: var(--ergofit-primary) !important;
+    }
+
     .chart-container {
       padding: var(--ergofit-spacing-md) 0;
       text-align: center;

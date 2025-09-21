@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { IonApp, IonContent } from '@ionic/angular/standalone';
-import { NavbarComponent } from './shared/components/navbar.component';
+import { IonApp } from '@ionic/angular/standalone';
+import { FirebaseService } from './services/firebase.service';
 
 @Component({
   selector: 'app-root',
@@ -10,49 +10,30 @@ import { NavbarComponent } from './shared/components/navbar.component';
   imports: [
     CommonModule,
     RouterOutlet,
-    IonApp,
-    IonContent,
-    NavbarComponent
+    IonApp
   ],
   template: `
     <ion-app>
-      <!-- Header with Navigation -->
-      <app-navbar
-        [selectedTab]="selectedTab"
-        [pageTitle]="getPageTitle()"
-        (tabChange)="onTabChange($event)"
-        (postureCheck)="onPostureCheck()">
-      </app-navbar>
-
-      <!-- Router Outlet for Page Content -->
-      <div class="router-content">
-        <router-outlet></router-outlet>
-      </div>
+      <router-outlet></router-outlet>
     </ion-app>
   `,
   styles: [`
     ion-app {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
-    }
-
-    .router-content {
-      padding-top: 60px;
-      padding-bottom: 80px;
-      min-height: 100vh;
-      z-index: 1;
     }
   `]
 })
 export class AppComponent implements OnInit, OnDestroy {
   selectedTab: string = 'dashboard';
 
-  constructor() {
-    console.log('ErgoFit App initialized with proper routing');
+  constructor(private firebaseService: FirebaseService) {
+    console.log('ErgoFit App initialized with proper routing and Firebase');
   }
 
   ngOnInit() {
     console.log('ErgoFit App - ngOnInit started');
+    // Log app initialization to Firebase Analytics
+    this.firebaseService.logPageView('app_init');
   }
 
   ngOnDestroy() {
@@ -62,10 +43,16 @@ export class AppComponent implements OnInit, OnDestroy {
   onTabChange(tab: string) {
     this.selectedTab = tab;
     console.log('Tab changed to:', tab);
+    // Log tab navigation to Firebase Analytics
+    this.firebaseService.logPageView(tab);
   }
 
   onPostureCheck() {
     console.log('Posture check triggered from main app');
+    // Log posture check event to Firebase Analytics
+    this.firebaseService.logPostureEvent('posture_check_triggered', {
+      source: 'main_app'
+    });
   }
 
   getPageTitle(): string {

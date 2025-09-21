@@ -34,7 +34,7 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
 
 /* ErgoFit Global Styles */
 :root {
@@ -44,7 +44,9 @@
   --ergofit-accent: #9c88ff;
   --ergofit-dark: #4a148c;
   --ergofit-light: #e1bee7;
-  --ergofit-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --ergofit-background: #ffffff;
+  --ergofit-background-subtle: #faf9ff;
+  --ergofit-background-accent: linear-gradient(135deg, rgba(108, 99, 255, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
 
   /* Status Colors */
   --ergofit-success: #10dc60;
@@ -56,11 +58,11 @@
   --ergofit-card-radius: 16px;
   --ergofit-card-radius-sm: 12px;
   --ergofit-card-radius-lg: 20px;
-  --ergofit-card-shadow: 0 8px 32px rgba(103, 58, 183, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
-  --ergofit-card-shadow-hover: 0 12px 40px rgba(103, 58, 183, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
-  --ergofit-card-background: rgba(255, 255, 255, 0.95);
-  --ergofit-card-background-alt: rgba(255, 255, 255, 0.7);
-  --ergofit-card-border: 1px solid rgba(255, 255, 255, 0.2);
+  --ergofit-card-shadow: 0 4px 20px rgba(108, 99, 255, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+  --ergofit-card-shadow-hover: 0 8px 30px rgba(108, 99, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+  --ergofit-card-background: #ffffff;
+  --ergofit-card-background-alt: rgba(250, 249, 255, 0.8);
+  --ergofit-card-border: 1px solid rgba(108, 99, 255, 0.1);
 
   /* Spacing Variables */
   --ergofit-spacing-xs: 4px;
@@ -79,6 +81,11 @@
   --ergofit-font-size-xxl: 2rem;
   --ergofit-font-size-display: 2.5rem;
 
+  /* Layout Variables */
+  --ergofit-header-height: 60px;
+  --ergofit-navbar-height: 80px;
+  --ergofit-content-max-width: 1200px;
+  
   /* Breakpoints */
   --ergofit-breakpoint-sm: 480px;
   --ergofit-breakpoint-md: 768px;
@@ -86,12 +93,36 @@
   --ergofit-breakpoint-xl: 1200px;
 }
 
+/* Global Background Styles */
+body, ion-app {
+  background: var(--ergofit-background) !important;
+}
+
+ion-content {
+  --background: var(--ergofit-background) !important;
+  background: var(--ergofit-background) !important;
+}
+
+ion-content.ergofit-content {
+  --background: var(--ergofit-background-subtle) !important;
+  background: var(--ergofit-background-subtle) !important;
+}
+
+ion-content::part(background) {
+  background: var(--ergofit-background) !important;
+}
+
+ion-content::part(scroll) {
+  background: var(--ergofit-background) !important;
+}
+
 /* Global Card Styles */
-.ergofit-card {
+.ergofit-card,
+div.ergofit-card,
+ion-content .ergofit-card {
   margin: var(--ergofit-spacing-md) var(--ergofit-spacing-sm);
   border-radius: var(--ergofit-card-radius);
-  background: var(--ergofit-card-background);
-  backdrop-filter: blur(20px);
+  background: var(--ergofit-card-background) !important;
   border: var(--ergofit-card-border);
   box-shadow: var(--ergofit-card-shadow);
   transition: all 0.3s ease;
@@ -224,6 +255,24 @@
 /* Ensure all page content is below header */
 ion-content {
   z-index: 1;
+}
+
+/* Specific auth page background fixes - only target auth pages */
+app-get-started,
+app-login,
+app-register {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* Override any dark mode styles for auth pages only */
+@media (prefers-color-scheme: dark) {
+  app-get-started,
+  app-login,
+  app-register {
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+  }
 }
 
 /* Fix any potential overlap issues */
@@ -467,5 +516,206 @@ ion-content::part(scroll) {
 
   .ergofit-metric p {
     color: #b0b0b0;
+  }
+}
+
+/* Additional Utility Classes */
+.ergofit-container {
+  max-width: var(--ergofit-content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--ergofit-spacing-sm);
+}
+
+.ergofit-section {
+  margin-bottom: var(--ergofit-spacing-xl);
+}
+
+.ergofit-text-center {
+  text-align: center;
+}
+
+.ergofit-text-left {
+  text-align: left;
+}
+
+.ergofit-text-right {
+  text-align: right;
+}
+
+.ergofit-flex {
+  display: flex;
+}
+
+.ergofit-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.ergofit-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ergofit-flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ergofit-gap-sm {
+  gap: var(--ergofit-spacing-sm);
+}
+
+.ergofit-gap-md {
+  gap: var(--ergofit-spacing-md);
+}
+
+.ergofit-gap-lg {
+  gap: var(--ergofit-spacing-lg);
+}
+
+.ergofit-mb-sm {
+  margin-bottom: var(--ergofit-spacing-sm);
+}
+
+.ergofit-mb-md {
+  margin-bottom: var(--ergofit-spacing-md);
+}
+
+.ergofit-mb-lg {
+  margin-bottom: var(--ergofit-spacing-lg);
+}
+
+.ergofit-mt-sm {
+  margin-top: var(--ergofit-spacing-sm);
+}
+
+.ergofit-mt-md {
+  margin-top: var(--ergofit-spacing-md);
+}
+
+.ergofit-mt-lg {
+  margin-top: var(--ergofit-spacing-lg);
+}
+
+/* Enhanced List Styles */
+.ergofit-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ergofit-spacing-sm);
+}
+
+.ergofit-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ergofit-spacing-sm);
+  padding: var(--ergofit-spacing-sm);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--ergofit-card-radius-sm);
+  transition: all 0.2s ease;
+}
+
+.ergofit-list-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+/* Enhanced Progress Bars */
+.ergofit-progress-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  height: 8px;
+  margin: var(--ergofit-spacing-xs) 0;
+}
+
+.ergofit-progress-bar {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.3s ease;
+}
+
+.ergofit-progress-success {
+  background: linear-gradient(90deg, var(--ergofit-success), #20dc70);
+}
+
+.ergofit-progress-warning {
+  background: linear-gradient(90deg, var(--ergofit-warning), #ffd700);
+}
+
+.ergofit-progress-danger {
+  background: linear-gradient(90deg, var(--ergofit-danger), #ff6161);
+}
+
+/* Improved Animation */
+@keyframes ergofit-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ergofit-animate-in {
+  animation: ergofit-fade-in 0.6s ease-out;
+}
+
+/* Enhanced Button Styles */
+.ergofit-button {
+  background: var(--ergofit-primary);
+  color: white;
+  border: none;
+  border-radius: var(--ergofit-card-radius-sm);
+  padding: var(--ergofit-spacing-sm) var(--ergofit-spacing-md);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.ergofit-button:hover {
+  background: var(--ergofit-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+}
+
+/* Scrolling and Content Spacing */
+ion-content {
+  --padding-bottom: 100px !important;
+}
+
+ion-content.ergofit-content {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 20px;
+  --padding-bottom: 100px !important;
+}
+
+/* Ensure content can scroll properly */
+.content-spacer {
+  height: 100px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* Fix for tab bar overlay */
+ion-tab-bar {
+  position: fixed !important;
+  bottom: 0 !important;
+  z-index: 999 !important;
+}
+
+/* Ensure content area doesn't get hidden behind tabs */
+ion-content {
+  --offset-bottom: 56px !important;
+}
+
+@media (max-width: 768px) {
+  ion-content {
+    --padding-bottom: 120px !important;
+    --offset-bottom: 60px !important;
   }
 }
