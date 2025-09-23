@@ -1,15 +1,21 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, take } from 'rxjs/operators';
+import { map, filter, take } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 export const authGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.currentUser$.pipe(
+  return combineLatest([
+    authService.currentUser$,
+    authService.loading$
+  ]).pipe(
+    // Wait until initialization is complete (loading = false)
+    filter(([user, loading]) => !loading),
     take(1),
-    map(user => {
+    map(([user, loading]) => {
       if (user) {
         return true;
       } else {
@@ -24,9 +30,14 @@ export const guestGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.currentUser$.pipe(
+  return combineLatest([
+    authService.currentUser$,
+    authService.loading$
+  ]).pipe(
+    // Wait until initialization is complete (loading = false)
+    filter(([user, loading]) => !loading),
     take(1),
-    map(user => {
+    map(([user, loading]) => {
       if (!user) {
         return true;
       } else {

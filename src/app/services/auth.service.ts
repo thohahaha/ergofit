@@ -34,8 +34,10 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<UserProfile | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   
-  private loadingSubject = new BehaviorSubject<boolean>(false);
+  private loadingSubject = new BehaviorSubject<boolean>(true); // Start with true for initialization
   public loading$ = this.loadingSubject.asObservable();
+
+  private initializationComplete = false;
 
   constructor() {
     // Listen to auth state changes
@@ -52,6 +54,13 @@ export class AuthService {
       } else {
         this.currentUserSubject.next(null);
       }
+      
+      // Mark initialization as complete after first auth state check
+      if (!this.initializationComplete) {
+        this.initializationComplete = true;
+        this.loadingSubject.next(false);
+        console.log('Auth initialization complete, user:', user ? 'authenticated' : 'not authenticated');
+      }
     });
   }
 
@@ -61,6 +70,10 @@ export class AuthService {
 
   get isAuthenticated(): boolean {
     return this.currentUser !== null;
+  }
+
+  get isInitialized(): boolean {
+    return this.initializationComplete;
   }
 
   /**

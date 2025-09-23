@@ -18,7 +18,8 @@ import {
   barChartOutline,
   bulbOutline,
   settingsOutline,
-  logOutOutline
+  logOutOutline,
+  personOutline
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 
@@ -71,6 +72,11 @@ import { AuthService } from '../services/auth.service';
         <ion-tab-button tab="recommendations">
           <ion-icon name="bulb-outline"></ion-icon>
           <ion-label>Saran</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="profile">
+          <ion-icon name="person-outline"></ion-icon>
+          <ion-label>Profile</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="settings">
@@ -172,7 +178,8 @@ export class TabsPage {
       'bar-chart-outline': barChartOutline,
       'bulb-outline': bulbOutline,
       'settings-outline': settingsOutline,
-      'log-out-outline': logOutOutline
+      'log-out-outline': logOutOutline,
+      'person-outline': personOutline
     });
   }
 

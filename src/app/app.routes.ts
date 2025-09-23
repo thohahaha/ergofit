@@ -4,7 +4,7 @@ import { authGuard, guestGuard } from './guards/auth.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/get-started',
+    redirectTo: '/dashboard', // Changed to dashboard as default
     pathMatch: 'full'
   },
   {

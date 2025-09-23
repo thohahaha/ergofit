@@ -52,6 +52,19 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'profile',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('../pages/profile/profile.component').then((m) => m.ProfileComponent),
+          },
+          {
+            path: 'settings',
+            loadComponent: () => import('../pages/profile/profile-settings.component').then((m) => m.ProfileSettingsComponent),
+          }
+        ]
+      },
+      {
         path: '',
         redirectTo: '/dashboard',
         pathMatch: 'full',

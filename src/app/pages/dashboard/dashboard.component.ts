@@ -1,481 +1,726 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonIcon,
-  IonProgressBar
-} from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import {
-  warningOutline,
-  alertCircleOutline
-} from 'ionicons/icons';
+import { IonContent, IonIcon, IonButton, IonChip } from '@ionic/angular/standalone';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [
-    CommonModule,
-    IonContent,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonIcon,
-    IonProgressBar
-  ],
+  imports: [CommonModule, IonContent, IonIcon, IonButton, IonChip],
   template: `
-    <ion-content class="ion-padding ergofit-content" [fullscreen]="true">
-      <!-- Grid untuk 4 Kartu Ringkasan -->
-      <div class="ergofit-grid ergofit-grid-auto">
-        <div class="ergofit-card" style="background: white !important; background-color: white !important;">
-          <div class="ergofit-card-header">
-            <h3 class="ergofit-card-title">Skor Postur</h3>
+    <ion-content class="dashboard">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-content">
+          <div class="header-left">
+            <h1>ErgoFit Dashboard</h1>
+            <p>Real-time Workspace Analytics</p>
           </div>
-          <div class="ergofit-card-content">
-            <div class="ergofit-metric">
-              <h1>{{postureScore}}/100</h1>
-              <p>{{postureStatus}}</p>
+          <div class="header-right">
+            <div class="status-indicator" [class]="currentStatus">
+              <div class="status-dot"></div>
+              <span>{{currentStatusText}}</span>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="ergofit-card" style="background: white !important; background-color: white !important;">
-          <div class="ergofit-card-header">
-            <h3 class="ergofit-card-title">Peringatan Aktif</h3>
-          </div>
-          <div class="ergofit-card-content">
-            <div class="ergofit-flex-center" style="gap: var(--ergofit-spacing-sm);">
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Key Metrics Row -->
+        <div class="metrics-row">
+          <div class="metric-card primary">
+            <div class="metric-header">
               <div class="metric-icon">
-                <ion-icon name="warning-outline" color="warning"></ion-icon>
+                <ion-icon name="analytics-outline"></ion-icon>
               </div>
-              <div class="ergofit-metric">
-                <h2>{{activeWarnings}}</h2>
-                <p>peringatan aktif</p>
+              <div class="metric-trend positive">
+                <ion-icon name="trending-up-outline"></ion-icon>
+                <span>+5%</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="ergofit-card" style="background: white !important; background-color: white !important;">
-          <div class="ergofit-card-header">
-            <h3 class="ergofit-card-title">Waktu Aktif</h3>
-          </div>
-          <div class="ergofit-card-content">
-            <div class="ergofit-metric">
-              <h2>{{activeTime}}</h2>
-              <p>dari target 8 jam</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="ergofit-card" style="background: white !important; background-color: white !important;">
-          <div class="ergofit-card-header">
-            <h3 class="ergofit-card-title">Istirahat Hari Ini</h3>
-          </div>
-          <div class="ergofit-card-content">
-            <div class="ergofit-metric">
-              <h2>{{breaksToday}}</h2>
-              <p>dari target 8 istirahat</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Banner Peringatan -->
-      <div class="ergofit-warning-banner">
-        <ion-icon name="alert-circle-outline" color="warning"></ion-icon>
-        <span><strong>Peringatan:</strong> Postur membungkuk terdeteksi selama 15 menit</span>
-      </div>
-
-      <!-- Progress Bars -->
-      <div class="ergofit-card" style="background: white !important; background-color: white !important;">
-        <div class="ergofit-card-header">
-          <h3 class="ergofit-card-title">Progress Hari Ini</h3>
-        </div>
-        <div class="ergofit-card-content">
-          <div class="ergofit-progress-section">
-            <div class="ergofit-progress-item">
-              <div class="ergofit-progress-label">
-                <span>Postur Baik</span>
-                <span class="ergofit-progress-value">{{goodPosturePercent}}%</span>
+            <div class="metric-value">{{postureScore}}<span class="unit">%</span></div>
+            <div class="metric-label">Posture Score</div>
+            <div class="metric-progress">
+              <div class="progress-track">
+                <div class="progress-fill" [style.width]="postureScore + '%'"></div>
               </div>
-              <ion-progress-bar [value]="goodPosturePercent / 100" class="success"></ion-progress-bar>
-            </div>
-
-            <div class="ergofit-progress-item">
-              <div class="ergofit-progress-label">
-                <span>Target Istirahat</span>
-                <span class="ergofit-progress-value">{{breakTargetPercent}}%</span>
-              </div>
-              <ion-progress-bar [value]="breakTargetPercent / 100"></ion-progress-bar>
+              <span class="progress-text">Excellent</span>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Statistik Mingguan -->
-      <div class="ergofit-card" style="background: white !important; background-color: white !important;">
-        <div class="ergofit-card-header">
-          <h3 class="ergofit-card-title">Statistik Mingguan</h3>
+          <div class="metric-card secondary">
+            <div class="metric-header">
+              <div class="metric-icon">
+                <ion-icon name="time-outline"></ion-icon>
+              </div>
+            </div>
+            <div class="metric-value">{{activeTime}}</div>
+            <div class="metric-label">Active Time Today</div>
+            <div class="metric-progress">
+              <div class="progress-track">
+                <div class="progress-fill" [style.width]="timeProgressPercent + '%'"></div>
+              </div>
+              <span class="progress-text">{{timeProgressPercent}}% of 8hr target</span>
+            </div>
+          </div>
+
+          <div class="metric-card tertiary">
+            <div class="metric-header">
+              <div class="metric-icon">
+                <ion-icon name="refresh-outline"></ion-icon>
+              </div>
+            </div>
+            <div class="metric-value">{{breaksToday}}<span class="unit">/8</span></div>
+            <div class="metric-label">Breaks Taken</div>
+            <div class="break-indicators">
+              <div *ngFor="let i of [1,2,3,4,5,6,7,8]"
+                   class="break-dot" [class.completed]="i <= breaksToday"></div>
+            </div>
+          </div>
+
+          <div class="metric-card warning" *ngIf="activeWarnings > 0">
+            <div class="metric-header">
+              <div class="metric-icon alert">
+                <ion-icon name="warning-outline"></ion-icon>
+              </div>
+            </div>
+            <div class="metric-value">{{activeWarnings}}</div>
+            <div class="metric-label">Active Alerts</div>
+            <div class="alert-message">{{latestWarningMessage}}</div>
+          </div>
         </div>
-        <div class="ergofit-card-content">
-          <div class="ergofit-grid ergofit-grid-2">
+
+        <!-- Alert Banner -->
+        <div *ngIf="activeWarnings > 0" class="alert-banner">
+          <div class="alert-content">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <div class="alert-text">
+              <strong>Posture Alert</strong>
+              <span>{{latestWarningMessage}} • {{formatTime(lastWarningTime)}}</span>
+            </div>
+            <ion-button fill="clear" size="small" class="alert-action">
+              Take Break
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="stats-section">
+          <div class="section-header">
+            <h2>Weekly Overview</h2>
+            <div class="period-selector">
+              <span class="active">7 Days</span>
+              <span>30 Days</span>
+            </div>
+          </div>
+
+          <div class="stats-grid">
             <div class="stat-item">
-              <h4>Rata-rata Skor</h4>
-              <p class="stat-value">82/100</p>
+              <div class="stat-icon">
+                <ion-icon name="trophy-outline"></ion-icon>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{weeklyStats.averageScore}}%</div>
+                <div class="stat-label">Average Score</div>
+                <div class="stat-change positive">+2.3% vs last week</div>
+              </div>
             </div>
+
             <div class="stat-item">
-              <h4>Total Peringatan</h4>
-              <p class="stat-value">15</p>
+              <div class="stat-icon">
+                <ion-icon name="café-outline"></ion-icon>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{weeklyStats.totalBreaks}}</div>
+                <div class="stat-label">Total Breaks</div>
+                <div class="stat-change positive">+12% vs last week</div>
+              </div>
             </div>
+
             <div class="stat-item">
-              <h4>Waktu Produktif</h4>
-              <p class="stat-value">45h 20m</p>
+              <div class="stat-icon">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{weeklyStats.totalWarnings}}</div>
+                <div class="stat-label">Alerts Resolved</div>
+                <div class="stat-change negative">-8% vs last week</div>
+              </div>
             </div>
-            <div class="stat-item">
-              <h4>Istirahat Diambil</h4>
-              <p class="stat-value">42/56</p>
-            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <h3>Quick Actions</h3>
+          <div class="action-buttons">
+            <ion-button class="action-btn primary" (click)="startQuickBreak()">
+              <ion-icon name="pause-outline"></ion-icon>
+              <span>Take Break</span>
+            </ion-button>
+            <ion-button class="action-btn secondary" fill="outline">
+              <ion-icon name="settings-outline"></ion-icon>
+              <span>Settings</span>
+            </ion-button>
+            <ion-button class="action-btn secondary" fill="outline">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <span>Reports</span>
+            </ion-button>
           </div>
         </div>
       </div>
-
-      <!-- Tips Hari Ini -->
-      <div class="ergofit-card" style="background: white !important; background-color: white !important;">
-        <div class="ergofit-card-header">
-          <h3 class="ergofit-card-title">Tips Ergonomi Hari Ini</h3>
-        </div>
-        <div class="ergofit-card-content">
-          <div class="tip-item">
-            <h4>💺 Posisi Duduk</h4>
-            <p>Pastikan kaki Anda menapak rata di lantai dan punggung tersandar dengan baik di kursi.</p>
-          </div>
-          <div class="tip-item">
-            <h4>👀 Jarak Monitor</h4>
-            <p>Monitor harus berjarak 50-70 cm dari mata Anda, dengan bagian atas monitor sejajar dengan mata.</p>
-          </div>
-          <div class="tip-item">
-            <h4>⏰ Istirahat Reguler</h4>
-            <p>Lakukan istirahat setiap 30-60 menit untuk berdiri dan meregangkan tubuh.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Aktivitas Terbaru -->
-      <div class="ergofit-card" style="background: white !important; background-color: white !important;">
-        <div class="ergofit-card-header">
-          <h3 class="ergofit-card-title">Aktivitas Terbaru</h3>
-        </div>
-        <div class="ergofit-card-content">
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-time">10:30</div>
-              <div class="activity-content">
-                <span class="activity-type warning">Peringatan</span>
-                <p>Postur membungkuk terdeteksi</p>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-time">10:15</div>
-              <div class="activity-content">
-                <span class="activity-type success">Istirahat</span>
-                <p>Istirahat 5 menit selesai</p>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-time">09:45</div>
-              <div class="activity-content">
-                <span class="activity-type info">Postur</span>
-                <p>Postur baik selama 30 menit</p>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-time">09:30</div>
-              <div class="activity-content">
-                <span class="activity-type warning">Peringatan</span>
-                <p>Monitor terlalu dekat dengan mata</p>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-time">09:00</div>
-              <div class="activity-content">
-                <span class="activity-type success">Mulai</span>
-                <p>Sesi monitoring dimulai</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Spacer untuk memastikan konten tidak tertutup navbar -->
-      <div class="content-spacer"></div>
     </ion-content>
   `,
   styles: [`
     :host {
       display: block;
       min-height: 100vh;
-      background: var(--ergofit-background-subtle) !important;
+      background: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
     }
 
-    ion-content {
-      --background: var(--ergofit-background-subtle) !important;
-      background: var(--ergofit-background-subtle) !important;
+    .dashboard {
+      --background: transparent !important;
     }
 
-    ion-content::part(background) {
-      background: var(--ergofit-background-subtle) !important;
+    /* Header Section */
+    .header {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 2rem 0 1.5rem;
     }
 
-    ion-content::part(scroll) {
-      background: var(--ergofit-background-subtle) !important;
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    /* Force card backgrounds to be white */
-    .ergofit-card,
-    div.ergofit-card,
-    ion-content .ergofit-card {
-      background: white !important;
-      background-color: white !important;
+    .header-left h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.025em;
     }
 
-    .ergofit-warning-banner {
-      background: rgba(255, 193, 7, 0.1) !important;
-      border: 1px solid rgba(255, 193, 7, 0.2);
-      color: #333 !important;
+    .header-left p {
+      color: #64748b;
+      font-size: 1rem;
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border: 1px solid;
+    }
+
+    .status-indicator.status-good {
+      background: #f0fdf4;
+      border-color: #22c55e;
+      color: #15803d;
+    }
+
+    .status-indicator.status-warning {
+      background: #fffbeb;
+      border-color: #f59e0b;
+      color: #d97706;
+    }
+
+    .status-indicator.status-danger {
+      background: #fef2f2;
+      border-color: #ef4444;
+      color: #dc2626;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .status-good .status-dot { background: #22c55e; }
+    .status-warning .status-dot { background: #f59e0b; }
+    .status-danger .status-dot { background: #ef4444; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Metrics Row */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .metric-card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .metric-card.primary { border-left: 4px solid #3b82f6; }
+    .metric-card.secondary { border-left: 4px solid #10b981; }
+    .metric-card.tertiary { border-left: 4px solid #8b5cf6; }
+    .metric-card.warning { border-left: 4px solid #f59e0b; }
+
+    .metric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
     }
 
     .metric-icon {
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.3), rgba(255, 152, 0, 0.3));
-      border-radius: 50%;
-      padding: var(--ergofit-spacing-sm);
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(10px);
-    }
-
-    ion-progress-bar {
-      --progress-background: linear-gradient(90deg, var(--ergofit-primary), var(--ergofit-accent));
-      --background: rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      height: 8px;
-    }
-
-    ion-progress-bar.success {
-      --progress-background: linear-gradient(90deg, var(--ergofit-success), #8bc34a);
-    }
-
-    .ergofit-card-title,
-    .ergofit-card h3 {
-      color: var(--ergofit-primary) !important;
-    }
-
-    .ergofit-metric h1,
-    .ergofit-metric h2 {
-      color: var(--ergofit-primary) !important;
-    }
-
-    .ergofit-metric p {
-      color: #666 !important;
-    }
-
-    .ergofit-progress-label span {
-      color: #333 !important;
-    }
-
-    .ergofit-progress-value {
-      color: var(--ergofit-primary) !important;
-    }
-
-    .content-spacer {
-      height: 100px; /* Extra space untuk memastikan konten tidak tertutup navbar */
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: var(--ergofit-spacing-md);
-      background: var(--ergofit-card-background-alt);
-      border: 1px solid rgba(108, 99, 255, 0.1);
-      border-radius: var(--ergofit-card-radius-sm);
-      margin-bottom: var(--ergofit-spacing-sm);
-    }
-
-    .stat-item h4 {
-      color: #666 !important;
-      font-size: 0.9rem;
-      margin-bottom: var(--ergofit-spacing-xs);
-    }
-
-    .stat-value {
-      color: var(--ergofit-primary) !important;
       font-size: 1.5rem;
+      color: white;
+    }
+
+    .metric-card.primary .metric-icon { background: #3b82f6; }
+    .metric-card.secondary .metric-icon { background: #10b981; }
+    .metric-card.tertiary .metric-icon { background: #8b5cf6; }
+    .metric-card.warning .metric-icon.alert { background: #f59e0b; }
+
+    .metric-trend {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.875rem;
       font-weight: 600;
-      margin: 0;
     }
 
-    .tip-item {
-      margin-bottom: var(--ergofit-spacing-lg);
-      padding: var(--ergofit-spacing-md);
-      background: var(--ergofit-card-background-alt);
-      border: 1px solid rgba(108, 99, 255, 0.1);
-      border-radius: var(--ergofit-card-radius-sm);
-      border-left: 4px solid var(--ergofit-primary);
+    .metric-trend.positive { color: #22c55e; }
+    .metric-trend.negative { color: #ef4444; }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1;
+      margin-bottom: 0.5rem;
     }
 
-    .tip-item h4 {
-      color: var(--ergofit-primary) !important;
-      margin-bottom: var(--ergofit-spacing-sm);
+    .metric-value .unit {
+      font-size: 1.5rem;
+      color: #64748b;
+      font-weight: 600;
     }
 
-    .tip-item p {
-      color: #666 !important;
-      margin: 0;
-      line-height: 1.5;
+    .metric-label {
+      color: #64748b;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
     }
 
-    .activity-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--ergofit-spacing-md);
+    .metric-progress {
+      margin-top: 1rem;
     }
 
-    .activity-item {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--ergofit-spacing-md);
-      padding: var(--ergofit-spacing-md);
-      background: var(--ergofit-card-background-alt);
-      border: 1px solid rgba(108, 99, 255, 0.1);
-      border-radius: var(--ergofit-card-radius-sm);
+    .progress-track {
+      height: 6px;
+      background: #f1f5f9;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 0.5rem;
     }
 
-    .activity-time {
-      color: #666 !important;
-      font-size: 0.9rem;
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .metric-card.primary .progress-fill { background: #3b82f6; }
+    .metric-card.secondary .progress-fill { background: #10b981; }
+    .metric-card.tertiary .progress-fill { background: #8b5cf6; }
+
+    .progress-text {
+      font-size: 0.75rem;
+      color: #64748b;
       font-weight: 500;
-      min-width: 50px;
     }
 
-    .activity-content {
+    .break-indicators {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .break-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .break-dot.completed {
+      background: #8b5cf6;
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+    }
+
+    .alert-message {
+      font-size: 0.875rem;
+      color: #dc2626;
+      font-weight: 500;
+      margin-top: 0.5rem;
+    }
+
+    /* Alert Banner */
+    .alert-banner {
+      background: linear-gradient(90deg, #fef3c7, #fef9c3);
+      border: 1px solid #f59e0b;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .alert-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .alert-content ion-icon {
+      color: #f59e0b;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .alert-text {
       flex: 1;
     }
 
-    .activity-type {
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-bottom: var(--ergofit-spacing-xs);
-      display: inline-block;
+    .alert-text strong {
+      color: #92400e;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.25rem;
     }
 
-    .activity-type.warning {
-      background: rgba(255, 193, 7, 0.2);
-      color: #f57c00 !important;
+    .alert-text span {
+      color: #a16207;
+      font-size: 0.875rem;
     }
 
-    .activity-type.success {
-      background: rgba(76, 175, 80, 0.2);
-      color: #388e3c !important;
+    .alert-action {
+      --color: #f59e0b;
+      font-weight: 600;
     }
 
-    .activity-type.info {
-      background: rgba(33, 150, 243, 0.2);
-      color: #1976d2 !important;
+    /* Statistics Section */
+    .stats-section {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
-    .activity-content p {
-      color: #666 !important;
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
       margin: 0;
-      font-size: 0.9rem;
     }
-  `]
+
+    .period-selector {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .period-selector span {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .period-selector span.active {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .period-selector span:not(.active) {
+      color: #64748b;
+    }
+
+    .period-selector span:not(.active):hover {
+      background: #f1f5f9;
+      color: #1e293b;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #3b82f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      color: #64748b;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-change {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .stat-change.positive { color: #22c55e; }
+    .stat-change.negative { color: #ef4444; }
+
+    /* Quick Actions */
+    .quick-actions {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .quick-actions h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 1.5rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      --border-radius: 12px;
+      --padding-start: 1.5rem;
+      --padding-end: 1.5rem;
+      height: 48px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .action-btn.primary {
+      --background: #3b82f6;
+      --color: white;
+    }
+
+    .action-btn.secondary {
+      --border-color: #d1d5db;
+      --color: #374151;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .metrics-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .metric-card {
+        padding: 1.5rem;
+      }
+
+      .section-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .action-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header {
+        padding: 1.5rem 0 1rem;
+      }
+
+      .header-content {
+        padding: 0 1rem;
+      }
+
+      .header-left h1 {
+        font-size: 1.5rem;
+      }
+
+      .metric-value {
+        font-size: 2rem;
+      }
+
+      .stats-section,
+      .quick-actions {
+        padding: 1.5rem;
+      }
+    }
+  `],
+  animations: [
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)', opacity: 0 }),
+        animate('0.5s ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  // Data Properties
-  postureScore: number = 85;
-  postureStatus: string = 'Baik';
-  activeWarnings: number = 2;
-  activeTime: string = '6h 30m';
-  breaksToday: number = 5;
-  goodPosturePercent: number = 78;
-  breakTargetPercent: number = 62;
+  // Basic data properties
+  postureScore = 85;
+  activeWarnings = 2;
+  latestWarningMessage = 'Poor posture detected';
+  lastWarningTime = new Date();
+  activeTime = '6.5h';
+  timeProgressPercent = 81;
+  breaksToday = 5;
+  currentStatus = 'status-good';
+  currentStatusText = 'Good Posture';
+  
+  weeklyStats = {
+    averageScore: 78,
+    totalBreaks: 35,
+    totalWarnings: 12
+  };
 
-  // Data Update Control
-  private dataInterval: any;
-  updateFrequency: number = 2500;
+  ngOnInit() {
+    this.simulateRealTimeData();
+  }
 
-  constructor() {
-    addIcons({
-      'warning-outline': warningOutline,
-      'alert-circle-outline': alertCircleOutline
+  ngOnDestroy() {}
+
+  formatTime(date: Date): string {
+    return date.toLocaleTimeString('id-ID', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
     });
   }
 
-  ngOnInit() {
-    this.startDataSimulation();
+  startQuickBreak() {
+    console.log('Starting quick break...');
   }
 
-  ngOnDestroy() {
-    this.stopDataSimulation();
-  }
-
-  onPostureCheck() {
-    console.log('Starting posture check...');
-    setTimeout(() => {
-      this.postureScore = Math.floor(Math.random() * 30) + 70;
-      this.updatePostureStatus();
-    }, 2000);
-  }
-
-  private startDataSimulation() {
-    this.dataInterval = setInterval(() => {
-      this.updateData();
-    }, this.updateFrequency);
-  }
-
-  private stopDataSimulation() {
-    if (this.dataInterval) {
-      clearInterval(this.dataInterval);
-      this.dataInterval = null;
-    }
-  }
-
-  private updateData() {
-    this.postureScore = Math.floor(Math.random() * (95 - 65 + 1) + 65);
-    this.activeWarnings = Math.floor(Math.random() * 6);
-
-    const currentMinutes = parseInt(this.activeTime.split('h ')[1].split('m')[0]);
-    const newMinutes = Math.max(0, currentMinutes + Math.floor(Math.random() * 3 - 1));
-    const hours = Math.floor(newMinutes / 60) + parseInt(this.activeTime.split('h')[0]);
-    this.activeTime = `${Math.min(hours, 8)}h ${newMinutes % 60}m`;
-
-    this.breaksToday = Math.max(0, this.breaksToday + Math.floor(Math.random() * 3 - 1));
-    this.goodPosturePercent = Math.max(30, Math.min(95, this.goodPosturePercent + Math.floor(Math.random() * 11 - 5)));
-    this.breakTargetPercent = Math.max(20, Math.min(100, this.breakTargetPercent + Math.floor(Math.random() * 7 - 3)));
-
-    this.updatePostureStatus();
-  }
-
-  private updatePostureStatus() {
-    if (this.postureScore >= 85) {
-      this.postureStatus = 'Sangat Baik';
-    } else if (this.postureScore >= 70) {
-      this.postureStatus = 'Baik';
-    } else {
-      this.postureStatus = 'Perlu Perbaikan';
-    }
+  private simulateRealTimeData() {
+    setInterval(() => {
+      this.postureScore = Math.floor(Math.random() * 20) + 70;
+      this.activeWarnings = Math.floor(Math.random() * 4);
+      
+      if (this.postureScore > 80) {
+        this.currentStatus = 'status-good';
+        this.currentStatusText = 'Good Posture';
+      } else if (this.postureScore > 60) {
+        this.currentStatus = 'status-warning';
+        this.currentStatusText = 'Fair Posture';
+      } else {
+        this.currentStatus = 'status-danger';
+        this.currentStatusText = 'Poor Posture';
+      }
+    }, 5000);
   }
 }
