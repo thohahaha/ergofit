@@ -1,0 +1,465 @@
+<ion-header [translucent]="true" class="settings-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        defaultHref="/profile"
+        [icon]="'arrow-back-outline'"
+        class="back-button">
+      </ion-back-button>
+    </ion-buttons>
+    <ion-title class="header-title">
+      <div class="title-content">
+        <span class="title-text">Profile Settings</span>
+        <div class="title-glow"></div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="saveAllSettings()" class="save-btn">
+        <ion-icon name="save-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="settings-content">
+  <!-- Navigation Tabs -->
+  <div class="navigation-container">
+    <div class="nav-glow"></div>
+    <ion-segment
+      [(ngModel)]="activeSegment"
+      class="settings-segment"
+      (ionChange)="onSegmentChange($event)">
+      <ion-segment-button value="profile" class="nav-btn">
+        <div class="nav-content">
+          <ion-icon name="person-outline" class="nav-icon"></ion-icon>
+          <ion-label class="nav-label">Profile</ion-label>
+        </div>
+      </ion-segment-button>
+      <ion-segment-button value="preferences" class="nav-btn">
+        <div class="nav-content">
+          <ion-icon name="notifications-outline" class="nav-icon"></ion-icon>
+          <ion-label class="nav-label">Preferences</ion-label>
+        </div>
+      </ion-segment-button>
+      <ion-segment-button value="security" class="nav-btn">
+        <div class="nav-content">
+          <ion-icon name="lock-closed-outline" class="nav-icon"></ion-icon>
+          <ion-label class="nav-label">Security</ion-label>
+        </div>
+      </ion-segment-button>
+      <ion-segment-button value="data" class="nav-btn">
+        <div class="nav-content">
+          <ion-icon name="cloud-upload-outline" class="nav-icon"></ion-icon>
+          <ion-label class="nav-label">Data</ion-label>
+        </div>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <div class="settings-container">
+
+    <!-- Profile Settings -->
+    <div class="settings-section" *ngIf="activeSegment === 'profile'">
+
+      <!-- Avatar & Basic Info -->
+      <div class="profile-card futuristic-card">
+        <div class="card-glow"></div>
+        <div class="avatar-section">
+          <div class="avatar-container">
+            <div class="avatar-glow-ring"></div>
+            <ion-avatar class="user-avatar">
+              <img [src]="userProfile?.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'"
+                   [alt]="userProfile?.displayName + ' Avatar'">
+            </ion-avatar>
+            <ion-button
+              class="change-avatar-btn futuristic-btn"
+              fill="clear"
+              size="small"
+              (click)="changeAvatar()">
+              <ion-icon name="camera-outline"></ion-icon>
+              <div class="btn-glow"></div>
+            </ion-button>
+          </div>
+          <div class="user-info">
+            <h2 class="user-name">{{userProfile?.displayName || 'User'}}</h2>
+            <p class="user-level">Level {{userProfile?.level || 1}} • {{userProfile?.title || 'Beginner'}}</p>
+            <div class="level-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width]="'75%'"></div>
+              </div>
+              <span class="progress-text">75% to next level</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Information Form -->
+      <div class="form-card">
+        <div class="card-header">
+          <h3>Personal Information</h3>
+          <p>Update your basic profile information</p>
+        </div>
+        <div class="form-content">
+
+          <div class="form-group">
+            <ion-item class="form-item">
+              <ion-label position="stacked">Display Name</ion-label>
+              <ion-input
+                [value]="userProfile?.displayName || ''"
+                (ionInput)="onDisplayNameChange($event)"
+                placeholder="Enter your display name">
+              </ion-input>
+            </ion-item>
+          </div>
+
+          <div class="form-group">
+            <ion-item class="form-item">
+              <ion-label position="stacked">Email Address</ion-label>
+              <ion-input
+                [value]="userProfile?.email || ''"
+                type="email"
+                [readonly]="true"
+                placeholder="Email cannot be changed">
+              </ion-input>
+            </ion-item>
+          </div>
+
+          <div class="form-group">
+            <ion-item class="form-item">
+              <ion-label position="stacked">Bio</ion-label>
+              <ion-textarea
+                [value]="userProfile?.bio || ''"
+                (ionInput)="onBioChange($event)"
+                placeholder="Tell us about yourself..."
+                rows="3">
+              </ion-textarea>
+            </ion-item>
+          </div>
+
+          <div class="form-group">
+            <ion-item class="form-item">
+              <ion-label>Work Type</ion-label>
+              <ion-select
+                [value]="userProfile?.workType || 'office'"
+                (ionChange)="onWorkTypeChange($event)"
+                placeholder="Select work type">
+                <ion-select-option value="office">Office Worker</ion-select-option>
+                <ion-select-option value="remote">Remote Worker</ion-select-option>
+                <ion-select-option value="hybrid">Hybrid</ion-select-option>
+                <ion-select-option value="student">Student</ion-select-option>
+                <ion-select-option value="freelancer">Freelancer</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Preferences Settings -->
+    <div class="settings-section" *ngIf="activeSegment === 'preferences'">
+
+      <!-- Notifications -->
+      <div class="form-card">
+        <div class="card-header">
+          <h3>Notifications & Alerts</h3>
+          <p>Customize how you receive posture and break reminders</p>
+        </div>
+        <div class="form-content">
+
+          <div class="toggle-group">
+            <ion-item class="toggle-item">
+              <ion-label>
+                <h4>Posture Reminders</h4>
+                <p>Get notified when poor posture is detected</p>
+              </ion-label>
+              <ion-toggle
+                [checked]="userProfile?.preferences?.postureReminders || false"
+                (ionChange)="onPreferenceChange('postureReminders', $event)">
+              </ion-toggle>
+            </ion-item>
+
+            <ion-item class="toggle-item">
+              <ion-label>
+                <h4>Break Notifications</h4>
+                <p>Remind me to take regular breaks</p>
+              </ion-label>
+              <ion-toggle
+                [checked]="userProfile?.preferences?.breakNotifications || false"
+                (ionChange)="onPreferenceChange('breakNotifications', $event)">
+              </ion-toggle>
+            </ion-item>
+
+            <ion-item class="toggle-item">
+              <ion-label>
+                <h4>Achievement Alerts</h4>
+                <p>Show celebration when achievements are unlocked</p>
+              </ion-label>
+              <ion-toggle
+                [checked]="userProfile?.preferences?.achievementAlerts || false"
+                (ionChange)="onPreferenceChange('achievementAlerts', $event)">
+              </ion-toggle>
+            </ion-item>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Monitoring Settings -->
+      <div class="form-card">
+        <div class="card-header">
+          <h3>Monitoring Settings</h3>
+          <p>Adjust how ErgoFit monitors your posture</p>
+        </div>
+        <div class="form-content">
+
+          <div class="range-group">
+            <ion-item class="range-item">
+              <ion-label>
+                <h4>Reminder Frequency</h4>
+                <p>How often to check and remind: {{userProfile?.preferences?.reminderInterval || 30}} minutes</p>
+              </ion-label>
+              <ion-range
+                [value]="userProfile?.preferences?.reminderInterval || 30"
+                (ionInput)="onReminderIntervalChange($event)"
+                min="15"
+                max="120"
+                step="15"
+                pin="true">
+                <ion-label slot="start">15m</ion-label>
+                <ion-label slot="end">2h</ion-label>
+              </ion-range>
+            </ion-item>
+
+            <ion-item class="range-item">
+              <ion-label>
+                <h4>Detection Sensitivity</h4>
+                <p>Higher sensitivity detects smaller posture changes</p>
+              </ion-label>
+              <ion-range
+                [value]="userProfile?.preferences?.sensitivity || 7"
+                (ionInput)="onSensitivityChange($event)"
+                min="1"
+                max="10"
+                step="1"
+                pin="true">
+                <ion-label slot="start">Low</ion-label>
+                <ion-label slot="end">High</ion-label>
+              </ion-range>
+            </ion-item>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Appearance -->
+      <div class="form-card">
+        <div class="card-header">
+          <h3>App Appearance</h3>
+          <p>Customize the look and feel of the app</p>
+        </div>
+        <div class="form-content">
+
+          <div class="appearance-group">
+            <ion-item class="toggle-item">
+              <ion-label>
+                <h4>Dark Mode</h4>
+                <p>Use dark theme throughout the app</p>
+              </ion-label>
+              <ion-toggle
+                [checked]="userProfile?.preferences?.darkMode || false"
+                (ionChange)="onPreferenceChange('darkMode', $event)">
+              </ion-toggle>
+            </ion-item>
+
+            <ion-item class="form-item">
+              <ion-label>Color Theme</ion-label>
+              <ion-select
+                [value]="userProfile?.preferences?.colorTheme || 'purple'"
+                (ionChange)="onColorThemeChange($event)">
+                <ion-select-option value="purple">Purple</ion-select-option>
+                <ion-select-option value="blue">Blue</ion-select-option>
+                <ion-select-option value="green">Green</ion-select-option>
+                <ion-select-option value="orange">Orange</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item class="range-item">
+              <ion-label>
+                <h4>Font Size</h4>
+                <p>Adjust text size for better readability</p>
+              </ion-label>
+              <ion-range
+                [value]="userProfile?.preferences?.fontSize || 1.0"
+                (ionInput)="onFontSizeChange($event)"
+                min="0.8"
+                max="1.4"
+                step="0.1"
+                pin="true">
+                <ion-label slot="start">Small</ion-label>
+                <ion-label slot="end">Large</ion-label>
+              </ion-range>
+            </ion-item>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Settings -->
+    <div class="settings-section" *ngIf="activeSegment === 'security'">
+
+      <div class="form-card">
+        <div class="card-header">
+          <h3>Change Password</h3>
+          <p>Update your account password</p>
+        </div>
+        <div class="form-content">
+
+          <div class="password-group">
+            <div class="form-group">
+              <ion-item class="form-item">
+                <ion-label position="stacked">Current Password</ion-label>
+                <ion-input
+                  [type]="showCurrentPassword ? 'text' : 'password'"
+                  [(ngModel)]="securitySettings.currentPassword"
+                  placeholder="Enter current password">
+                </ion-input>
+                <ion-button
+                  fill="clear"
+                  slot="end"
+                  (click)="togglePasswordVisibility('current')">
+                  <ion-icon [name]="showCurrentPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </div>
+
+            <div class="form-group">
+              <ion-item class="form-item">
+                <ion-label position="stacked">New Password</ion-label>
+                <ion-input
+                  [type]="showNewPassword ? 'text' : 'password'"
+                  [(ngModel)]="securitySettings.newPassword"
+                  placeholder="Enter new password">
+                </ion-input>
+                <ion-button
+                  fill="clear"
+                  slot="end"
+                  (click)="togglePasswordVisibility('new')">
+                  <ion-icon [name]="showNewPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </div>
+
+            <div class="form-group">
+              <ion-item class="form-item">
+                <ion-label position="stacked">Confirm Password</ion-label>
+                <ion-input
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  [(ngModel)]="securitySettings.confirmPassword"
+                  placeholder="Confirm new password">
+                </ion-input>
+                <ion-button
+                  fill="clear"
+                  slot="end"
+                  (click)="togglePasswordVisibility('confirm')">
+                  <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="card-header">
+          <h3>Security Options</h3>
+          <p>Additional security features for your account</p>
+        </div>
+        <div class="form-content">
+
+          <div class="toggle-group">
+            <ion-item class="toggle-item">
+              <ion-label>
+                <h4>Two-Factor Authentication</h4>
+                <p>Add an extra layer of security to your account</p>
+              </ion-label>
+              <ion-toggle
+                [(ngModel)]="securitySettings.twoFactorEnabled">
+              </ion-toggle>
+            </ion-item>
+
+            <ion-item class="toggle-item">
+              <ion-label>
+                <h4>Login Notifications</h4>
+                <p>Get notified when someone logs into your account</p>
+              </ion-label>
+              <ion-toggle
+                [(ngModel)]="securitySettings.loginNotifications">
+              </ion-toggle>
+            </ion-item>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Management -->
+    <div class="settings-section" *ngIf="activeSegment === 'data'">
+
+      <div class="form-card">
+        <div class="card-header">
+          <h3>Export & Backup</h3>
+          <p>Download or sync your ErgoFit data</p>
+        </div>
+        <div class="form-content">
+
+          <div class="action-group">
+            <ion-button
+              expand="block"
+              fill="outline"
+              class="action-button export-button"
+              (click)="exportData()">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              Export My Data
+            </ion-button>
+
+            <ion-button
+              expand="block"
+              fill="outline"
+              class="action-button sync-button"
+              (click)="syncData()">
+              <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+              Sync to Cloud
+            </ion-button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-card danger-zone">
+        <div class="card-header">
+          <h3>Danger Zone</h3>
+          <p>Actions that cannot be undone</p>
+        </div>
+        <div class="form-content">
+
+          <div class="action-group">
+            <ion-button
+              expand="block"
+              fill="outline"
+              color="danger"
+              class="action-button danger-button"
+              (click)="clearAllData()">
+              <ion-icon name="trash-outline" slot="start"></ion-icon>
+              Clear All Data
+            </ion-button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

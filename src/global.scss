@@ -464,6 +464,37 @@ ion-content::part(scroll) {
     text-align: center;
     gap: var(--ergofit-spacing-xs);
   }
+
+  /* Enhanced mobile touch targets */
+  .ergofit-button,
+  ion-button {
+    min-height: 44px;
+    min-width: 44px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+  }
+
+  /* Improved mobile navigation */
+  .ergofit-interactive {
+    min-height: 44px;
+    padding: var(--ergofit-spacing-sm);
+  }
+
+  /* Better mobile typography */
+  body {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Enhanced mobile scrolling */
+  ion-content {
+    --padding-bottom: 120px !important;
+    scroll-behavior: smooth;
+  }
+
+  /* Mobile-specific spacing */
+  .content-spacer {
+    height: 120px;
+  }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
@@ -524,6 +555,14 @@ ion-content::part(scroll) {
   max-width: var(--ergofit-content-max-width);
   margin: 0 auto;
   padding: 0 var(--ergofit-spacing-sm);
+}
+
+/* Mobile-specific container */
+@media (max-width: 768px) {
+  .ergofit-container {
+    padding: 0 var(--ergofit-spacing-xs);
+    max-width: 100%;
+  }
 }
 
 .ergofit-section {
@@ -713,9 +752,27 @@ ion-content {
   --offset-bottom: 56px !important;
 }
 
+/* Safe area insets support for modern mobile devices */
+@supports (padding: max(0px)) {
+  ion-content {
+    --padding-bottom: max(100px, env(safe-area-inset-bottom)) !important;
+  }
+
+  ion-tab-bar {
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(56px + env(safe-area-inset-bottom));
+  }
+}
+
 @media (max-width: 768px) {
   ion-content {
     --padding-bottom: 120px !important;
     --offset-bottom: 60px !important;
+  }
+
+  @supports (padding: max(0px)) {
+    ion-content {
+      --padding-bottom: max(120px, env(safe-area-inset-bottom)) !important;
+    }
   }
 }

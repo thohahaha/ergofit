@@ -42,406 +42,528 @@ import { SampleDataService } from '../../services/sample-data.service';
     IonProgressBar
   ],
   template: `
-    <ion-content class="profile-content" [fullscreen]="true">
-      <div *ngIf="userProfile">
-        <!-- Profile Header -->
+    <ion-content class="profile-content">
+      <div *ngIf="userProfile" class="profile-container">
+
+        <!-- Clean Profile Header -->
         <div class="profile-header">
-          <div class="avatar-container">
-            <ion-avatar class="profile-avatar">
-              <img [src]="userProfile.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'" 
-                   [alt]="userProfile.displayName + ' Avatar'">
-            </ion-avatar>
-          </div>
-          
-          <div class="user-info">
-            <h1 class="user-name">{{userProfile.displayName}}</h1>
-            <p class="user-level">Level {{userProfile.level}} • {{userProfile.title}}</p>
-            
-            <div class="quick-actions">
-              <ion-button 
-                class="action-btn" 
-                fill="outline" 
+          <div class="header-content">
+            <div class="avatar-section">
+              <ion-avatar class="profile-avatar">
+                <img [src]="userProfile.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'"
+                     [alt]="userProfile.displayName + ' Avatar'">
+              </ion-avatar>
+              <div class="user-info">
+                <h1 class="user-name">{{userProfile.displayName}}</h1>
+                <p class="user-level">Level {{userProfile.level}} • {{userProfile.title}}</p>
+              </div>
+            </div>
+
+            <div class="header-actions">
+              <ion-button
+                class="settings-btn"
+                fill="clear"
                 (click)="navigateToSettings()">
-                <ion-icon name="settings-outline" slot="start"></ion-icon>
-                Settings
-              </ion-button>
-              
-              <!-- Debug button for generating sample data -->
-              <ion-button 
-                class="action-btn debug-btn" 
-                fill="outline" 
-                color="warning"
-                (click)="generateSampleData()">
-                <ion-icon name="flask-outline" slot="start"></ion-icon>
-                Generate Sample Data
+                <ion-icon name="settings-outline" slot="icon-only"></ion-icon>
               </ion-button>
             </div>
           </div>
         </div>
 
-        <!-- Stats Dashboard -->
-        <div class="stats-dashboard">
-          <h2 class="section-title">
-            <ion-icon name="bar-chart-outline"></ion-icon>
-            Performance Dashboard
-          </h2>
-          
-          <div class="stats-grid">
-            <div class="stat-card primary">
-              <div class="stat-icon">
-                <ion-icon name="trophy-outline"></ion-icon>
-              </div>
-              <div class="stat-content">
-                <h3>{{userProfile.totalPoints}}</h3>
-                <p>Total Points</p>
-                <ion-progress-bar [value]="getPointsProgress()" class="gold"></ion-progress-bar>
-              </div>
+        <!-- Main Content -->
+        <div class="main-content">
+
+          <!-- Key Performance Metrics -->
+          <section class="metrics-section">
+            <div class="section-header">
+              <h2 class="section-title">Performance Overview</h2>
             </div>
 
-            <div class="stat-card secondary">
-              <div class="stat-icon">
-                <ion-icon name="flame-outline"></ion-icon>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon primary">
+                  <ion-icon name="trophy-outline"></ion-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{userProfile.totalPoints}}</div>
+                  <div class="stat-label">Total Points</div>
+                  <ion-progress-bar [value]="getPointsProgress()" color="warning"></ion-progress-bar>
+                </div>
               </div>
-              <div class="stat-content">
-                <h3>{{userProfile.currentStreak}}</h3>
-                <p>Day Streak</p>
-                <ion-progress-bar [value]="getStreakProgress()" class="fire"></ion-progress-bar>
+
+              <div class="stat-card">
+                <div class="stat-icon secondary">
+                  <ion-icon name="flame-outline"></ion-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{userProfile.currentStreak}}</div>
+                  <div class="stat-label">Day Streak</div>
+                  <ion-progress-bar [value]="getStreakProgress()" color="danger"></ion-progress-bar>
+                </div>
               </div>
+
+              <div class="stat-card">
+                <div class="stat-icon tertiary">
+                  <ion-icon name="time-outline"></ion-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{userProfile.totalHours}}h</div>
+                  <div class="stat-label">Hours Monitored</div>
+                  <ion-progress-bar [value]="getHoursProgress()" color="secondary"></ion-progress-bar>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon quaternary">
+                  <ion-icon name="checkmark-circle-outline"></ion-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{userProfile.accuracyScore}}%</div>
+                  <div class="stat-label">Accuracy Score</div>
+                  <ion-progress-bar [value]="userProfile.accuracyScore / 100" color="success"></ion-progress-bar>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Progress Visualization -->
+          <section class="charts-section">
+            <div class="section-header">
+              <h2 class="section-title">Weekly Progress</h2>
             </div>
 
-            <div class="stat-card tertiary">
-              <div class="stat-icon">
-                <ion-icon name="time-outline"></ion-icon>
+            <div class="charts-grid">
+              <div class="chart-card">
+                <div class="chart-header">
+                  <h3>Posture Score</h3>
+                </div>
+                <div class="chart-container">
+                  <canvas
+                    #postureChart
+                    class="progress-canvas"
+                    width="200"
+                    height="200">
+                  </canvas>
+                </div>
               </div>
-              <div class="stat-content">
-                <h3>{{userProfile.totalHours}}h</h3>
-                <p>Monitored</p>
-                <ion-progress-bar [value]="getHoursProgress()" class="time"></ion-progress-bar>
+
+              <div class="chart-card">
+                <div class="chart-header">
+                  <h3>Activity Level</h3>
+                </div>
+                <div class="chart-container">
+                  <canvas
+                    #activityChart
+                    class="progress-canvas"
+                    width="200"
+                    height="200">
+                  </canvas>
+                </div>
               </div>
+            </div>
+          </section>
+
+          <!-- Achievements Section -->
+          <section class="achievements-section">
+            <div class="section-header">
+              <h2 class="section-title">Achievements</h2>
+              <p class="section-subtitle">{{getUnlockedAchievementsCount()}} of {{userProfile.achievements.length}} unlocked</p>
             </div>
 
-            <div class="stat-card quaternary">
-              <div class="stat-icon">
-                <ion-icon name="checkmark-circle-outline"></ion-icon>
-              </div>
-              <div class="stat-content">
-                <h3>{{userProfile.accuracyScore}}%</h3>
-                <p>Accuracy</p>
-                <ion-progress-bar [value]="userProfile.accuracyScore / 100" class="accuracy"></ion-progress-bar>
+            <div class="achievements-grid">
+              <div
+                class="achievement-card"
+                [class.unlocked]="achievement.unlocked"
+                *ngFor="let achievement of userProfile.achievements">
+                <div class="achievement-icon" [class.unlocked]="achievement.unlocked">
+                  <ion-icon [name]="achievement.icon"></ion-icon>
+                </div>
+                <div class="achievement-content">
+                  <h4 class="achievement-title">{{achievement.name}}</h4>
+                  <p class="achievement-description">{{achievement.description}}</p>
+                  <div class="achievement-progress" *ngIf="achievement.unlocked">{{achievement.progress}}</div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        <!-- Achievements Section -->
-        <div class="achievements-section">
-          <h2 class="section-title">
-            <ion-icon name="trophy-outline"></ion-icon>
-            Achievements
-          </h2>
-          
-          <div class="achievements-grid">
-            <div 
-              class="achievement-card" 
-              [class.unlocked]="achievement.unlocked"
-              [class.locked]="!achievement.unlocked"
-              *ngFor="let achievement of userProfile.achievements">
-              <div class="achievement-icon">
-                <ion-icon [name]="achievement.icon"></ion-icon>
-              </div>
-              <h4 class="achievement-title">{{achievement.name}}</h4>
-              <p class="achievement-desc">{{achievement.description}}</p>
-              <div class="achievement-progress">{{achievement.progress}}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Progress Charts -->
-        <div class="progress-section">
-          <h2 class="section-title">
-            <ion-icon name="bar-chart-outline"></ion-icon>
-            Weekly Progress
-          </h2>
-          
-          <div class="progress-charts">
-            <div class="chart-card">
-              <h3 class="chart-title">Posture Score</h3>
-              <div class="chart-container">
-                <canvas 
-                  #postureChart 
-                  class="progress-canvas" 
-                  width="200" 
-                  height="200">
-                </canvas>
-              </div>
-            </div>
-
-            <div class="chart-card">
-              <h3 class="chart-title">Activity Level</h3>
-              <div class="chart-container">
-                <canvas 
-                  #activityChart 
-                  class="progress-canvas" 
-                  width="200" 
-                  height="200">
-                </canvas>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
       <!-- Loading State -->
       <div *ngIf="!userProfile" class="loading-state">
-        <ion-icon name="person-outline"></ion-icon>
-        <p>Loading profile...</p>
+        <div class="loading-content">
+          <ion-icon name="person-outline"></ion-icon>
+          <p>Loading your profile...</p>
+        </div>
       </div>
     </ion-content>
   `,
   styles: [`
+    /* Main Layout */
     .profile-content {
-      --background: var(--ergofit-background);
+      --background: #f8fafc;
+      padding: 0;
     }
 
+    .profile-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Clean Header */
     .profile-header {
-      padding: 40px 24px;
-      text-align: center;
-      background: linear-gradient(135deg, var(--ergofit-primary), var(--ergofit-accent));
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      padding: 2rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .avatar-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
 
     .profile-avatar {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       border: 3px solid rgba(255, 255, 255, 0.9);
-      margin-bottom: 16px;
     }
 
     .user-name {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      margin: 0 0 8px 0;
+      margin: 0 0 0.25rem 0;
     }
 
     .user-level {
-      font-size: 1rem;
+      font-size: 0.9rem;
       opacity: 0.9;
-      margin-bottom: 16px;
+      margin: 0;
     }
 
-    .quick-actions {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .action-btn {
-      --background: rgba(255, 255, 255, 0.15);
+    .settings-btn {
       --color: white;
-      --border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      height: 36px;
-      min-width: 100px;
+      font-size: 1.5rem;
     }
 
-    .debug-btn {
-      --background: rgba(255, 193, 7, 0.15);
-      --color: var(--ion-color-warning);
-      border: 1px solid rgba(255, 193, 7, 0.3);
+    /* Main Content */
+    .main-content {
+      padding: 0 1.5rem 2rem;
     }
 
-    .stats-dashboard {
-      padding: 24px 16px;
+    /* Section Styling */
+    section {
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      margin-bottom: 1.5rem;
     }
 
     .section-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--ergofit-primary);
-      font-weight: 600;
-      margin: 0 0 20px 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 0.25rem 0;
     }
 
+    .section-subtitle {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin: 0;
+    }
+
+    /* Performance Metrics */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
     }
 
     .stat-card {
-      background: var(--ergofit-card-background);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--ergofit-card-shadow);
-      border: var(--ergofit-card-border);
-      position: relative;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.2s ease;
     }
 
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
+    .stat-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
     }
-
-    .stat-card.primary::before { background: #ffd700; }
-    .stat-card.secondary::before { background: #ff6b6b; }
-    .stat-card.tertiary::before { background: #4ecdc4; }
-    .stat-card.quaternary::before { background: var(--ergofit-primary); }
 
     .stat-icon {
       width: 50px;
       height: 50px;
-      border-radius: 12px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 12px;
+      flex-shrink: 0;
     }
 
-    .stat-card.primary .stat-icon { background: #ffd700; }
-    .stat-card.secondary .stat-icon { background: #ff6b6b; }
-    .stat-card.tertiary .stat-icon { background: #4ecdc4; }
-    .stat-card.quaternary .stat-icon { background: var(--ergofit-primary); }
+    .stat-icon.primary { background: #f59e0b; }
+    .stat-icon.secondary { background: #ef4444; }
+    .stat-icon.tertiary { background: #10b981; }
+    .stat-icon.quaternary { background: #3b82f6; }
 
     .stat-icon ion-icon {
-      font-size: 24px;
+      font-size: 1.5rem;
       color: white;
     }
 
-    .stat-content h3 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--ergofit-primary);
-      margin: 0 0 4px 0;
+    .stat-content {
+      flex: 1;
+      min-width: 0;
     }
 
-    .stat-content p {
-      color: #666;
-      margin: 0 0 8px 0;
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #1e293b;
+      line-height: 1;
+      margin-bottom: 0.25rem;
     }
 
-    .stat-progress ion-progress-bar {
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-content ion-progress-bar {
       --height: 4px;
       --border-radius: 2px;
     }
 
-    .achievements-section {
-      padding: 0 16px 24px;
-    }
-
-    .achievements-grid {
+    /* Charts Section */
+    .charts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-    }
-
-    .achievement-card {
-      background: var(--ergofit-card-background);
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: var(--ergofit-card-shadow);
-      border: var(--ergofit-card-border);
-      text-align: center;
-    }
-
-    .achievement-card.unlocked { border-color: #ffd700; }
-
-    .achievement-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin: 0 auto 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #ffd700;
-      color: white;
-    }
-
-    .achievement-title {
-      font-weight: 600;
-      color: var(--ergofit-primary);
-      margin: 0 0 4px 0;
-      font-size: 0.9rem;
-    }
-
-    .achievement-desc {
-      font-size: 0.8rem;
-      color: #666;
-      margin: 0 0 4px 0;
-    }
-
-    .achievement-progress {
-      font-size: 0.7rem;
-      color: #ffd700;
-      font-weight: 600;
-    }
-
-    .progress-section {
-      padding: 0 16px 24px;
-    }
-
-    .progress-charts {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
     }
 
     .chart-card {
-      background: var(--ergofit-card-background);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--ergofit-card-shadow);
-      border: var(--ergofit-card-border);
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
-    .chart-title {
+    .chart-header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .chart-header h3 {
+      font-size: 1rem;
       font-weight: 600;
-      color: var(--ergofit-primary);
-      margin: 0 0 16px 0;
-      text-align: center;
-    }
-
-    .chart-container {
-      text-align: center;
-    }
-
-    .progress-canvas {
-      max-width: 150px;
-      max-height: 150px;
-    }
-
-    .loading-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      color: #666;
-    }
-
-    .loading-state ion-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-      color: var(--ergofit-primary);
-      opacity: 0.6;
-    }
-
-    .loading-state p {
-      font-size: 1.1rem;
+      color: #1e293b;
       margin: 0;
     }
 
+    .chart-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .progress-canvas {
+      max-width: 160px;
+      max-height: 160px;
+    }
+
+    /* Achievements Section */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .achievement-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .achievement-card.unlocked {
+      border-color: #f59e0b;
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    }
+
+    .achievement-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .achievement-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e5e7eb;
+      color: #9ca3af;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .achievement-icon.unlocked {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .achievement-icon ion-icon {
+      font-size: 1.25rem;
+    }
+
+    .achievement-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .achievement-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .achievement-description {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin: 0 0 0.5rem 0;
+      line-height: 1.4;
+    }
+
+    .achievement-progress {
+      font-size: 0.75rem;
+      color: #f59e0b;
+      font-weight: 600;
+    }
+
+    /* Loading State */
+    .loading-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      padding: 2rem;
+    }
+
+    .loading-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .loading-content ion-icon {
+      font-size: 4rem;
+      color: #9ca3af;
+      margin-bottom: 1rem;
+    }
+
+    .loading-content p {
+      font-size: 1.125rem;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    /* Responsive Design */
     @media (max-width: 768px) {
-      .profile-header { padding: 32px 16px; }
-      .stats-grid, .achievements-grid, .progress-charts { grid-template-columns: 1fr; }
-      .quick-actions { flex-direction: column; align-items: center; }
+      .profile-header {
+        padding: 1.5rem 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+      }
+
+      .avatar-section {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+      }
+
+      .main-content {
+        padding: 0 1rem 2rem;
+      }
+
+      .stats-grid,
+      .charts-grid,
+      .achievements-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .achievement-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+      }
+
+      .section-title {
+        font-size: 1.125rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .profile-header {
+        padding: 1.25rem 0.75rem;
+      }
+
+      .main-content {
+        padding: 0 0.75rem 1.5rem;
+      }
+
+      .stat-card,
+      .chart-card,
+      .achievement-card {
+        padding: 1rem;
+      }
+
+      .profile-avatar {
+        width: 70px;
+        height: 70px;
+      }
+
+      .user-name {
+        font-size: 1.25rem;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
     }
   `]
 })
@@ -609,9 +731,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Debug method for testing
-  async generateSampleData() {
-    await this.sampleDataService.initializeSampleData();
-    console.log('Sample data generated successfully!');
+  getUnlockedAchievementsCount(): number {
+    if (!this.userProfile?.achievements) return 0;
+    return this.userProfile.achievements.filter(achievement => achievement.unlocked).length;
   }
 }
