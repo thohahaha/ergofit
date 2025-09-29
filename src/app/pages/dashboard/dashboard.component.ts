@@ -1,7 +1,27 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonIcon, IonButton } from '@ionic/angular/standalone';
-import { trigger, state, style, transition, animate } from '@angular/animations';
+import { FormsModule } from '@angular/forms';
+import {
+  IonContent,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonIcon,
+  IonButton,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonProgressBar,
+  IonBadge,
+  IonChip,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonGrid,
+  IonRow,
+  IonCol
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   analyticsOutline,
@@ -20,1019 +40,1536 @@ import {
   documentTextOutline,
   trophyOutline,
   cafeOutline,
-  shieldCheckmarkOutline
+  shieldCheckmarkOutline,
+  heartOutline,
+  bodyOutline,
+  fitnessOutline,
+  eyeOutline,
+  checkmarkCircleOutline,
+  homeOutline,
+  statsChartOutline,
+  flashOutline,
+  starOutline,
+  calendarOutline,
+  timerOutline
 } from 'ionicons/icons';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, IonContent, IonIcon, IonButton],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonContent,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonIcon,
+    IonButton,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonProgressBar,
+    IonBadge,
+    IonChip,
+    IonSegment,
+    IonSegmentButton,
+    IonLabel,
+    IonGrid,
+    IonRow,
+    IonCol
+  ],
   template: `
-    <ion-content class="dashboard futuristic-dashboard">
-      <!-- Animated Background -->
-      <div class="futuristic-bg">
-        <div class="grid-overlay"></div>
-        <div class="floating-particles">
-          <div *ngFor="let i of particleArray" class="particle" [style.animation-delay]="i * 0.5 + 's'"></div>
+    <ion-header class="header">
+      <ion-toolbar class="header-toolbar">
+        <ion-title class="header-title">
+          <div class="title-content">
+            <div class="brand-logo">
+              <img src="assets/logo/logo ergofit.jpg" alt="ErgoFit Logo" class="logo-image">
+            </div>
+            <div class="brand-text">
+              <span class="brand-name">ErgoFit</span>
+              <span class="brand-subtitle">Dashboard</span>
+            </div>
+          </div>
+        </ion-title>
+        <div slot="end" class="header-actions">
+          <ion-badge [color]="getStatusColor()" class="status-badge">
+            <ion-icon name="heart-outline"></ion-icon>
+            {{ currentStatusText }}
+          </ion-badge>
         </div>
-        <div class="neural-network">
-          <div class="network-node" *ngFor="let node of networkNodes"
-               [style.left]="node.x + '%'"
-               [style.top]="node.y + '%'"
-               [style.animation-delay]="node.delay + 's'"></div>
-        </div>
-      </div>
+      </ion-toolbar>
+    </ion-header>
 
-      <!-- Futuristic Header -->
-      <div class="header futuristic-header">
-        <div class="header-content">
-          <div class="header-left">
-            <div class="logo-container">
-              <div class="logo-glow"></div>
-              <h1 class="holographic-title">
-                <span class="title-main">ErgoFit</span>
-                <span class="title-sub">Smart Posture Monitor</span>
-              </h1>
-            </div>
-            <div class="system-info">
-              <div class="info-line">
-                <span class="info-label">Status:</span>
-                <span class="info-value">Active</span>
-              </div>
-              <div class="info-line">
-                <span class="info-label">Sync:</span>
-                <span class="info-value">{{neuralSyncStatus}}%</span>
-              </div>
-            </div>
-          </div>
-          <div class="header-right">
-            <div class="status-indicator futuristic-status" [class]="currentStatus">
-              <div class="status-ring">
-                <div class="status-core"></div>
-              </div>
-              <div class="status-text">
-                <span class="status-label">{{currentStatusText}}</span>
-                <span class="status-timestamp">{{getCurrentTime()}}</span>
-              </div>
-            </div>
-            <div class="control-panel">
-              <button class="holo-button" (click)="toggleScanMode()">
-                <ion-icon name="refresh-outline"></ion-icon>
-                <span>Refresh</span>
-              </button>
-              <button class="holo-button" (click)="openTerminal()">
-                <ion-icon name="settings-outline"></ion-icon>
-                <span>Settings</span>
-              </button>
-            </div>
-          </div>
+    <ion-content class="content" [fullscreen]="true">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <div class="welcome-content">
+          <h1>Selamat {{ getGreeting() }}, {{ userName }}!</h1>
+          <p>Berikut adalah ringkasan aktivitas ergonomis Anda hari ini</p>
+        </div>
+        <div class="current-time">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ getCurrentTime() }}</span>
         </div>
       </div>
 
-      <!-- Quick Access Menu -->
-      <div class="quick-access-menu">
-        <div class="menu-container">
-          <div class="menu-item" *ngFor="let item of quickAccessItems"
-               (click)="executeQuickAction(item.action)"
-               [class.active]="item.active">
-            <div class="menu-icon">
-              <ion-icon [name]="item.icon"></ion-icon>
-            </div>
-            <span class="menu-label">{{item.label}}</span>
-            <div class="menu-glow"></div>
-          </div>
+      <!-- Key Metrics Overview -->
+      <div class="metrics-overview">
+        <h2 class="section-title">
+          <ion-icon name="analytics-outline"></ion-icon>
+          Metrics Utama
+        </h2>
+
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12" size-md="6" size-lg="3">
+              <ion-card class="metric-card primary-card">
+                <ion-card-content>
+                  <div class="metric-header">
+                    <div class="metric-icon primary-icon">
+                      <ion-icon name="body-outline"></ion-icon>
+                    </div>
+                    <div class="metric-trend" [class.positive]="postureScore >= 80">
+                      <ion-icon name="trending-up-outline"></ion-icon>
+                      <span>+{{ trendValue }}%</span>
+                    </div>
+                  </div>
+                  <div class="metric-value">
+                    <span class="value">{{ postureScore }}</span>
+                    <span class="unit">%</span>
+                  </div>
+                  <div class="metric-label">Skor Postur</div>
+                  <ion-progress-bar [value]="postureScore / 100" class="metric-progress"></ion-progress-bar>
+                  <div class="metric-status">{{ getPostureStatus() }}</div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-md="6" size-lg="3">
+              <ion-card class="metric-card secondary-card">
+                <ion-card-content>
+                  <div class="metric-header">
+                    <div class="metric-icon secondary-icon">
+                      <ion-icon name="timer-outline"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="metric-value">
+                    <span class="value">{{ activeHours }}</span>
+                    <span class="unit">jam</span>
+                  </div>
+                  <div class="metric-label">Waktu Aktif</div>
+                  <ion-progress-bar [value]="timeProgressPercent / 100" class="metric-progress secondary"></ion-progress-bar>
+                  <div class="metric-status">{{ timeProgressPercent }}% dari target 8 jam</div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-md="6" size-lg="3">
+              <ion-card class="metric-card tertiary-card">
+                <ion-card-content>
+                  <div class="metric-header">
+                    <div class="metric-icon tertiary-icon">
+                      <ion-icon name="cafe-outline"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="metric-value">
+                    <span class="value">{{ breaksToday }}</span>
+                    <span class="unit">/8</span>
+                  </div>
+                  <div class="metric-label">Break Diambil</div>
+                  <div class="break-indicators">
+                    <div *ngFor="let i of breakNumbers"
+                         class="break-dot"
+                         [class.completed]="i <= breaksToday"
+                         [class.current]="i === breaksToday + 1">
+                    </div>
+                  </div>
+                  <div class="metric-status">{{ getBreakStatus() }}</div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+
+            <ion-col size="12" size-md="6" size-lg="3">
+              <ion-card class="metric-card success-card">
+                <ion-card-content>
+                  <div class="metric-header">
+                    <div class="metric-icon success-icon">
+                      <ion-icon name="star-outline"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="metric-value">
+                    <span class="value">{{ streakDays }}</span>
+                    <span class="unit">hari</span>
+                  </div>
+                  <div class="metric-label">Streak Terbaik</div>
+                  <div class="streak-visualization">
+                    <div *ngFor="let day of recentDays"
+                         class="streak-day"
+                         [class.completed]="day.completed">
+                      <div class="day-dot"></div>
+                    </div>
+                  </div>
+                  <div class="metric-status">Konsistensi Excellent!</div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- Alert Section -->
+      <div class="alert-section" *ngIf="currentAlerts.length > 0">
+        <h2 class="section-title">
+          <ion-icon name="warning-outline"></ion-icon>
+          Notifikasi & Alert
+        </h2>
+
+        <div class="alerts-container">
+          <ion-card *ngFor="let alert of currentAlerts"
+                   class="alert-card"
+                   [class]="'alert-' + alert.type">
+            <ion-card-content>
+              <div class="alert-header">
+                <div class="alert-icon">
+                  <ion-icon [name]="alert.icon"></ion-icon>
+                </div>
+                <div class="alert-content">
+                  <h4>{{ alert.title }}</h4>
+                  <p>{{ alert.message }}</p>
+                </div>
+                <ion-badge [color]="alert.type">{{ alert.priority }}</ion-badge>
+              </div>
+              <div class="alert-actions" *ngIf="alert.actions">
+                <ion-button *ngFor="let action of alert.actions"
+                           [fill]="action.primary ? 'solid' : 'outline'"
+                           size="small"
+                           (click)="handleAlertAction(action.action)">
+                  <ion-icon [name]="action.icon" slot="start"></ion-icon>
+                  {{ action.label }}
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
         </div>
       </div>
 
-      <!-- Main Content -->
-      <div class="main-content">
-        <!-- Key Metrics Row -->
-        <div class="metrics-row">
-          <div class="metric-card primary holo-card">
-            <div class="card-border-animation"></div>
-            <div class="metric-header">
-              <div class="metric-icon holo-icon">
-                <ion-icon name="analytics-outline"></ion-icon>
-                <div class="icon-pulse"></div>
-              </div>
-              <div class="metric-trend positive">
-                <ion-icon name="trending-up-outline"></ion-icon>
-                <span>+{{trendValue}}%</span>
-              </div>
-            </div>
-            <div class="metric-value holographic">
-              <span class="value-digits">{{postureScore}}</span>
-              <span class="unit">%</span>
-              <div class="value-scanner"></div>
-            </div>
-            <div class="metric-label">Posture Score</div>
-            <div class="metric-progress futuristic-progress">
-              <div class="progress-track">
-                <div class="progress-fill animated" [style.width]="postureScore + '%'"></div>
-                <div class="progress-glow" [style.width]="postureScore + '%'"></div>
-              </div>
-              <span class="progress-text">{{getPostureStatus()}}</span>
-            </div>
-          </div>
+      <!-- Today's Activities -->
+      <div class="activities-section">
+        <h2 class="section-title">
+          <ion-icon name="calendar-outline"></ion-icon>
+          Aktivitas Hari Ini
+        </h2>
 
-          <div class="metric-card secondary holo-card">
-            <div class="card-border-animation"></div>
-            <div class="metric-header">
-              <div class="metric-icon holo-icon">
-                <ion-icon name="time-outline"></ion-icon>
-                <div class="icon-pulse secondary"></div>
-              </div>
-            </div>
-            <div class="metric-value holographic">
-              <span class="value-digits">{{activeTime}}</span>
-              <div class="value-scanner"></div>
-            </div>
-            <div class="metric-label">Active Time Today</div>
-            <div class="metric-progress futuristic-progress">
-              <div class="progress-track">
-                <div class="progress-fill secondary animated" [style.width]="timeProgressPercent + '%'"></div>
-                <div class="progress-glow secondary" [style.width]="timeProgressPercent + '%'"></div>
-              </div>
-              <span class="progress-text">{{timeProgressPercent}}% of 8hr target</span>
-            </div>
-          </div>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12" size-lg="8">
+              <ion-card class="schedule-card">
+                <ion-card-header>
+                  <ion-card-title>Jadwal Ergonomis</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <div class="schedule-timeline">
+                    <div *ngFor="let activity of todaySchedule"
+                         class="timeline-item"
+                         [class.completed]="activity.completed"
+                         [class.current]="activity.current">
+                      <div class="timeline-time">{{ activity.time }}</div>
+                      <div class="timeline-content">
+                        <div class="activity-icon">
+                          <ion-icon [name]="activity.icon"></ion-icon>
+                        </div>
+                        <div class="activity-details">
+                          <h4>{{ activity.title }}</h4>
+                          <p>{{ activity.description }}</p>
+                        </div>
+                        <div class="activity-status">
+                          <ion-icon *ngIf="activity.completed"
+                                   name="checkmark-circle-outline"
+                                   color="success"></ion-icon>
+                          <ion-icon *ngIf="activity.current && !activity.completed"
+                                   name="flash-outline"
+                                   color="warning"></ion-icon>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
 
-          <div class="metric-card tertiary holo-card">
-            <div class="card-border-animation"></div>
-            <div class="metric-header">
-              <div class="metric-icon holo-icon">
-                <ion-icon name="refresh-outline"></ion-icon>
-                <div class="icon-pulse tertiary"></div>
-              </div>
-            </div>
-            <div class="metric-value holographic">
-              <span class="value-digits">{{breaksToday}}</span>
-              <span class="unit">/8</span>
-              <div class="value-scanner"></div>
-            </div>
-            <div class="metric-label">Breaks Taken</div>
-            <div class="break-indicators futuristic-breaks">
-              <div *ngFor="let i of [1,2,3,4,5,6,7,8]"
-                   class="break-node"
-                   [class.completed]="i <= breaksToday"
-                   [class.active]="i === breaksToday + 1">
-                <div class="node-core"></div>
-                <div class="node-ring"></div>
-              </div>
-            </div>
-          </div>
+            <ion-col size="12" size-lg="4">
+              <ion-card class="progress-card">
+                <ion-card-header>
+                  <ion-card-title>Progress Mingguan</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <div class="weekly-stats">
+                    <div class="stat-item">
+                      <div class="stat-icon">
+                        <ion-icon name="trophy-outline"></ion-icon>
+                      </div>
+                      <div class="stat-content">
+                        <div class="stat-value">{{ weeklyStats.averageScore }}%</div>
+                        <div class="stat-label">Rata-rata Skor</div>
+                        <div class="stat-change positive">+2.3% minggu lalu</div>
+                      </div>
+                    </div>
 
-          <div class="metric-card warning holo-card alert-card" *ngIf="activeWarnings > 0">
-            <div class="card-border-animation danger"></div>
-            <div class="alert-pulse"></div>
-            <div class="metric-header">
-              <div class="metric-icon holo-icon alert">
-                <ion-icon name="warning-outline"></ion-icon>
-                <div class="icon-pulse danger"></div>
-              </div>
-            </div>
-            <div class="metric-value holographic danger">
-              <span class="value-digits">{{activeWarnings}}</span>
-              <div class="value-scanner danger"></div>
-            </div>
-            <div class="metric-label">Active Alerts</div>
-            <div class="alert-message">{{latestWarningMessage}}</div>
-          </div>
-        </div>
+                    <div class="stat-item">
+                      <div class="stat-icon">
+                        <ion-icon name="fitness-outline"></ion-icon>
+                      </div>
+                      <div class="stat-content">
+                        <div class="stat-value">{{ weeklyStats.totalBreaks }}</div>
+                        <div class="stat-label">Total Break</div>
+                        <div class="stat-change positive">+12% minggu lalu</div>
+                      </div>
+                    </div>
 
-        <!-- Alert Banner -->
-        <div *ngIf="activeWarnings > 0" class="alert-banner">
-          <div class="alert-content">
-            <ion-icon name="alert-circle-outline"></ion-icon>
-            <div class="alert-text">
-              <strong>Posture Alert</strong>
-              <span>{{latestWarningMessage}} • {{formatTime(lastWarningTime)}}</span>
-            </div>
-            <ion-button fill="clear" size="small" class="alert-action">
-              Take Break
-            </ion-button>
-          </div>
-        </div>
+                    <div class="stat-item">
+                      <div class="stat-icon">
+                        <ion-icon name="shield-checkmark-outline"></ion-icon>
+                      </div>
+                      <div class="stat-content">
+                        <div class="stat-value">{{ weeklyStats.exercisesCompleted }}</div>
+                        <div class="stat-label">Latihan Selesai</div>
+                        <div class="stat-change positive">+18% minggu lalu</div>
+                      </div>
+                    </div>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
 
-        <!-- Statistics Section -->
-        <div class="stats-section">
-          <div class="section-header">
-            <h2>Weekly Overview</h2>
-            <div class="period-selector">
-              <span class="active">7 Days</span>
-              <span>30 Days</span>
-            </div>
-          </div>
+      <!-- Quick Actions -->
+      <div class="quick-actions-section">
+        <h2 class="section-title">
+          <ion-icon name="flash-outline"></ion-icon>
+          Aksi Cepat
+        </h2>
 
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-icon">
-                <ion-icon name="trophy-outline"></ion-icon>
-              </div>
-              <div class="stat-content">
-                <div class="stat-value">{{weeklyStats.averageScore}}%</div>
-                <div class="stat-label">Average Score</div>
-                <div class="stat-change positive">+2.3% vs last week</div>
-              </div>
-            </div>
-
-            <div class="stat-item">
-              <div class="stat-icon">
-                <ion-icon name="cafe-outline"></ion-icon>
-              </div>
-              <div class="stat-content">
-                <div class="stat-value">{{weeklyStats.totalBreaks}}</div>
-                <div class="stat-label">Total Breaks</div>
-                <div class="stat-change positive">+12% vs last week</div>
-              </div>
-            </div>
-
-            <div class="stat-item">
-              <div class="stat-icon">
-                <ion-icon name="shield-checkmark-outline"></ion-icon>
-              </div>
-              <div class="stat-content">
-                <div class="stat-value">{{weeklyStats.totalWarnings}}</div>
-                <div class="stat-label">Alerts Resolved</div>
-                <div class="stat-change negative">-8% vs last week</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-          <h3>Quick Actions</h3>
-          <div class="action-buttons">
-            <ion-button class="action-btn primary" (click)="startQuickBreak()">
-              <ion-icon name="pause-outline"></ion-icon>
-              <span>Take Break</span>
-            </ion-button>
-            <ion-button class="action-btn secondary" fill="outline">
-              <ion-icon name="settings-outline"></ion-icon>
-              <span>Settings</span>
-            </ion-button>
-            <ion-button class="action-btn secondary" fill="outline">
-              <ion-icon name="document-text-outline"></ion-icon>
-              <span>Reports</span>
-            </ion-button>
-          </div>
-        </div>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6" size-md="3">
+              <ion-button class="action-button primary-action"
+                         expand="block"
+                         (click)="startQuickBreak()">
+                <ion-icon name="pause-outline" slot="start"></ion-icon>
+                Istirahat Sekarang
+              </ion-button>
+            </ion-col>
+            <ion-col size="6" size-md="3">
+              <ion-button class="action-button secondary-action"
+                         expand="block"
+                         fill="outline">
+                <ion-icon name="body-outline" slot="start"></ion-icon>
+                Mulai Latihan
+              </ion-button>
+            </ion-col>
+            <ion-col size="6" size-md="3">
+              <ion-button class="action-button tertiary-action"
+                         expand="block"
+                         fill="outline">
+                <ion-icon name="stats-chart-outline" slot="start"></ion-icon>
+                Lihat Analytics
+              </ion-button>
+            </ion-col>
+            <ion-col size="6" size-md="3">
+              <ion-button class="action-button quaternary-action"
+                         expand="block"
+                         fill="outline">
+                <ion-icon name="settings-outline" slot="start"></ion-icon>
+                Pengaturan
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </div>
     </ion-content>
   `,
   styles: [`
     :host {
+      /* Modern Professional Color Palette */
+      --primary-color: #4f46e5;
+      --primary-light: #6366f1;
+      --primary-dark: #3730a3;
+      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      --secondary-color: #06b6d4;
+      --secondary-light: #22d3ee;
+      --tertiary-color: #f59e0b;
+      --accent-color: #8b5cf6;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --info-color: #3b82f6;
+
+      /* Neutral Colors */
+      --dark-color: #0f172a;
+      --gray-900: #0f172a;
+      --gray-800: #1e293b;
+      --gray-700: #334155;
+      --gray-600: #475569;
+      --gray-500: #64748b;
+      --gray-400: #94a3b8;
+      --gray-300: #cbd5e1;
+      --gray-200: #e2e8f0;
+      --gray-100: #f1f5f9;
+      --gray-50: #f8fafc;
+
+      /* Background & Surface */
+      --background-color: #fafbfc;
+      --background-gradient: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%);
+      --surface-color: #ffffff;
+      --surface-elevated: #ffffff;
+      --surface-overlay: rgba(255, 255, 255, 0.95);
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --card-shadow: var(--shadow-lg);
+      --card-shadow-hover: var(--shadow-xl);
+
+      /* Border Radius */
+      --border-radius: 16px;
+      --border-radius-sm: 12px;
+      --border-radius-xs: 8px;
+      --border-radius-lg: 20px;
+      --border-radius-xl: 24px;
+
+      /* Spacing */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-2xl: 48px;
+
+      /* Typography */
+      --font-size-xs: 0.75rem;
+      --font-size-sm: 0.875rem;
+      --font-size-base: 1rem;
+      --font-size-lg: 1.125rem;
+      --font-size-xl: 1.25rem;
+      --font-size-2xl: 1.5rem;
+      --font-size-3xl: 1.875rem;
+      --font-size-4xl: 2.25rem;
+
       display: block;
       min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
-      color: #1e293b;
-      overflow-x: hidden;
     }
 
-    .futuristic-dashboard {
-      --background: transparent !important;
+    /* Header Styles - Modern Glassmorphism */
+    .header {
+      background: var(--primary-gradient);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-lg);
       position: relative;
+      overflow: hidden;
+      color: white;
     }
 
-    /* Subtle Background Effects */
-    .futuristic-bg {
-      position: fixed;
+    .header::before {
+      content: '';
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
       pointer-events: none;
     }
 
-    .grid-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .header-toolbar {
+      --background: transparent;
+      --color: white;
+      padding: var(--spacing-md) var(--spacing-lg);
+      position: relative;
+      z-index: 1;
+    }
+
+    .title-content {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .brand-logo {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--border-radius-sm);
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .logo-image {
       width: 100%;
       height: 100%;
-      background-image:
-        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-      background-size: 60px 60px;
+      object-fit: contain;
+      border-radius: var(--border-radius-xs);
     }
 
-    .floating-particles,
-    .neural-network {
-      display: none; /* Remove excessive animations */
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      margin-left: var(--spacing-sm);
     }
 
-    /* Clean Modern Header */
-    .futuristic-header {
-      background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 2rem 0 1.5rem;
+    .brand-name {
+      font-size: var(--font-size-2xl);
+      font-weight: 800;
+      color: white;
+      line-height: 1;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      letter-spacing: -0.025em;
+    }
+
+    .brand-subtitle {
+      font-size: var(--font-size-sm);
+      opacity: 0.9;
+      color: white;
+      font-weight: 500;
+      margin-top: 2px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .status-badge {
+      background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      position: relative;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      padding: var(--spacing-sm) var(--spacing-md);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
     }
 
-    .header-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 2rem;
+    .status-badge:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* Content Layout */
+    .content {
+      --background: var(--background-gradient);
+      padding: var(--spacing-lg);
+      min-height: 100vh;
+    }
+
+    /* Welcome Section - Modern Card Design */
+    .welcome-section {
+      background: var(--primary-gradient);
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease-in-out infinite;
+      color: white;
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-2xl);
+      margin-bottom: var(--spacing-2xl);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: var(--shadow-2xl);
       position: relative;
-      z-index: 2;
+      overflow: hidden;
     }
 
-    .logo-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .logo-glow {
+    .welcome-section::before {
+      content: '';
       position: absolute;
-      width: 60px;
-      height: 60px;
-      background: radial-gradient(circle, #00ffff 0%, transparent 70%);
-      border-radius: 50%;
-      animation: logo-pulse 2s infinite;
-      filter: blur(10px);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+      pointer-events: none;
     }
 
-    @keyframes logo-pulse {
-      0%, 100% { opacity: 0.5; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.2); }
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
-    .holographic-title {
-      font-family: 'Orbitron', monospace;
+    .welcome-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .welcome-content h1 {
+      font-size: var(--font-size-4xl);
+      font-weight: 900;
+      margin: 0 0 var(--spacing-md) 0;
+      color: white;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+    }
+
+    .welcome-content p {
       margin: 0;
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
+      opacity: 0.95;
+      font-size: var(--font-size-lg);
+      font-weight: 400;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      line-height: 1.5;
     }
 
-    .title-main {
-      font-size: 2.2rem;
-      font-weight: 700;
-      color: #1e293b;
-      letter-spacing: -0.02em;
-    }
-
-    .title-sub {
-      font-size: 0.9rem;
-      color: #64748b;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-      margin-top: 0.3rem;
-    }
-
-    .system-info {
-      margin-top: 1rem;
-      font-family: 'Roboto Mono', monospace;
-    }
-
-    .info-line {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 0.3rem;
-    }
-
-    .info-label {
-      color: #888;
-      font-size: 0.7rem;
-      min-width: 80px;
-    }
-
-    .info-value {
-      color: #10b981;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    /* Clean Status Indicator */
-    .futuristic-status {
+    .current-time {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 0.8rem 1.2rem;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 8px;
+      gap: var(--spacing-sm);
+      background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .status-ring {
-      position: relative;
-      width: 32px;
-      height: 32px;
-      border: 2px solid #e2e8f0;
-      border-radius: 50%;
-    }
-
-    .status-core {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 8px;
-      height: 8px;
-      background: #10b981;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .status-good .status-core { background: #10b981; }
-    .status-warning .status-core { background: #f59e0b; }
-    .status-danger .status-core { background: #ef4444; }
-
-    .status-text {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-
-    .status-label {
-      font-size: 0.875rem;
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-radius: var(--border-radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       font-weight: 600;
-      color: #1e293b;
-    }
-
-    .status-timestamp {
-      font-size: 0.75rem;
-      color: #64748b;
-    }
-
-    /* Control Panel */
-    .control-panel {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .holo-button {
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: #1e293b;
-      padding: 0.6rem 1rem;
-      font-size: 0.8rem;
-      font-weight: 500;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      backdrop-filter: blur(10px);
-    }
-
-    .holo-button:hover {
-      background: rgba(255, 255, 255, 1);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .holo-button ion-icon {
-      margin-right: 0.4rem;
-      font-size: 1rem;
-    }
-
-    /* Simplified Quick Access Menu */
-    .quick-access-menu {
-      margin: 2rem 0;
-    }
-
-    .menu-container {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .menu-item {
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .menu-item:hover,
-    .menu-item.active {
-      background: rgba(255, 255, 255, 1);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .menu-item.active {
-      border-color: #3b82f6;
-      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
-    }
-
-    .menu-icon {
-      font-size: 1.2rem;
-      color: #64748b;
-      transition: all 0.2s ease;
-    }
-
-    .menu-item.active .menu-icon {
-      color: #3b82f6;
-    }
-
-    .menu-label {
-      font-size: 0.8rem;
-      color: #1e293b;
-      font-weight: 500;
-    }
-
-    .menu-glow {
-      display: none; /* Remove glow effects */
-    }
-
-    /* Main Content */
-    .main-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    /* Clean Modern Cards */
-    .metrics-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .holo-card {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      padding: 2rem;
-      backdrop-filter: blur(10px);
+      font-size: var(--font-size-lg);
+      box-shadow: var(--shadow-lg);
       transition: all 0.3s ease;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 1;
+    }
+
+    .current-time:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* Section Titles - Enhanced Typography */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      color: var(--gray-900);
+      font-size: var(--font-size-2xl);
+      font-weight: 800;
+      margin-bottom: var(--spacing-2xl);
+      letter-spacing: -0.025em;
       position: relative;
     }
 
-    .holo-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 48px;
+      height: 3px;
+      background: var(--primary-gradient);
+      border-radius: 2px;
     }
 
-    .card-border-animation {
-      display: none; /* Remove animated borders */
+    .section-title ion-icon {
+      color: var(--primary-color);
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Metrics Overview */
+    .metrics-overview {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    /* Metric Cards - Modern Professional Design */
+    .metric-card {
+      background: var(--surface-elevated);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--card-shadow);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .metric-card:hover {
+      box-shadow: var(--shadow-2xl);
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--gray-300);
+    }
+
+    .metric-card:hover::before {
+      opacity: 1;
+    }
+
+    .primary-card::before {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    }
+
+    .secondary-card::before {
+      background: linear-gradient(135deg, var(--secondary-color), var(--secondary-light));
+    }
+
+    .tertiary-card::before {
+      background: linear-gradient(135deg, var(--tertiary-color), #fbbf24);
+    }
+
+    .success-card::before {
+      background: linear-gradient(135deg, var(--success-color), #22d3ee);
     }
 
     .metric-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
+      align-items: flex-start;
+      margin-bottom: var(--spacing-lg);
+      padding-top: var(--spacing-sm);
     }
 
-    .holo-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+    .metric-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--border-radius-lg);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
       color: white;
-      background: #3b82f6;
+      font-size: 1.75rem;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    .holo-icon.secondary {
-      background: #10b981;
+    .metric-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
-    .holo-icon.tertiary {
-      background: #8b5cf6;
+    .metric-card:hover .metric-icon {
+      transform: scale(1.1) rotate(5deg);
     }
 
-    .holo-icon.alert {
-      background: #ef4444;
+    .metric-card:hover .metric-icon::before {
+      opacity: 1;
     }
 
-    .icon-pulse {
-      display: none; /* Remove pulse animations */
+    .primary-icon {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    }
+
+    .secondary-icon {
+      background: linear-gradient(135deg, var(--secondary-color), var(--secondary-light));
+    }
+
+    .tertiary-icon {
+      background: linear-gradient(135deg, var(--tertiary-color), #fbbf24);
+    }
+
+    .success-icon {
+      background: linear-gradient(135deg, var(--success-color), #22d3ee);
     }
 
     .metric-trend {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
-      font-size: 0.875rem;
-      font-weight: 600;
+      gap: var(--spacing-xs);
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--success-color), #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--border-radius-xs);
+      backdrop-filter: blur(4px);
     }
 
-    .metric-trend.positive { color: #22c55e; }
-    .metric-trend.negative { color: #ef4444; }
-
-    .holographic {
-      margin-bottom: 1rem;
+    .metric-trend.positive {
+      background: linear-gradient(135deg, var(--success-color), #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .value-digits {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #1e293b;
-      line-height: 1;
-      display: inline-block;
+    .metric-value {
+      margin-bottom: var(--spacing-lg);
+      display: flex;
+      align-items: baseline;
+      gap: var(--spacing-xs);
     }
 
-    .holographic .unit {
-      font-size: 1.5rem;
-      color: #64748b;
-      font-weight: 600;
+    .metric-value .value {
+      font-size: var(--font-size-4xl);
+      font-weight: 900;
+      color: var(--gray-900);
+      line-height: 0.9;
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, var(--gray-900), var(--gray-700));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .value-scanner {
-      display: none; /* Remove scanning animations */
+    .metric-value .unit {
+      font-size: var(--font-size-xl);
+      color: var(--gray-600);
+      font-weight: 700;
+      margin-top: var(--spacing-xs);
     }
 
     .metric-label {
-      color: #64748b;
-      font-size: 0.875rem;
-      font-weight: 600;
+      color: var(--gray-700);
+      font-size: var(--font-size-sm);
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--spacing-md);
+      opacity: 0.9;
     }
 
-    .futuristic-progress {
-      margin-top: 1rem;
-    }
-
-    .futuristic-progress .progress-track {
-      height: 6px;
-      background: #f1f5f9;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 0.5rem;
-    }
-
-    .progress-fill.animated {
-      height: 100%;
-      background: #3b82f6;
-      border-radius: 3px;
-      transition: width 0.3s ease;
-    }
-
-    .progress-fill.secondary {
-      background: #10b981;
-    }
-
-    .progress-fill.tertiary {
-      background: #8b5cf6;
-    }
-
-    .progress-glow {
-      display: none; /* Remove glow effects */
-    }
-
-    .progress-text {
-      font-size: 0.75rem;
-      color: #64748b;
-      font-weight: 500;
-    }
-
-    .futuristic-breaks {
-      display: flex;
-      gap: 0.8rem;
-      margin-top: 1rem;
-      justify-content: center;
-    }
-
-    .break-node {
-      position: relative;
-      width: 16px;
-      height: 16px;
-    }
-
-    .node-core {
-      width: 8px;
+    .metric-progress {
+      margin-bottom: var(--spacing-md);
+      --background: var(--gray-200);
+      --progress-background: var(--primary-gradient);
+      border-radius: var(--border-radius-xs);
       height: 8px;
-      border-radius: 50%;
-      background: rgba(0, 255, 255, 0.3);
-      border: 1px solid #00ffff;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      transition: all 0.3s ease;
+      overflow: hidden;
+      position: relative;
     }
 
-    .node-ring {
+    .metric-progress::after {
+      content: '';
       position: absolute;
       top: 0;
       left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+      animation: shimmer 2s infinite;
+    }
+
+    .metric-progress.secondary {
+      --background: var(--gray-200);
+      --progress-background: linear-gradient(135deg, var(--secondary-color), var(--secondary-light));
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .metric-status {
+      font-size: var(--font-size-xs);
+      color: var(--gray-600);
+      font-weight: 600;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      background: var(--gray-100);
+      border-radius: var(--border-radius-xs);
+      text-align: center;
+    }
+
+    /* Break Indicators - Enhanced */
+    .break-indicators {
+      display: flex;
+      gap: var(--spacing-sm);
+      justify-content: center;
+      margin-bottom: var(--spacing-md);
+      padding: var(--spacing-sm);
+    }
+
+    .break-dot {
       width: 16px;
       height: 16px;
-      border: 1px solid rgba(0, 255, 255, 0.2);
       border-radius: 50%;
+      background: var(--gray-200);
+      border: 2px solid var(--gray-300);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
 
-    .break-node.completed .node-core {
-      background: #8844ff;
-      border-color: #8844ff;
-      box-shadow: 0 0 10px #8844ff;
+    .break-dot::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6px;
+      height: 6px;
+      background: var(--tertiary-color);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s ease;
     }
 
-    .break-node.active .node-core {
-      background: #ffff00;
-      border-color: #ffff00;
-      box-shadow: 0 0 15px #ffff00;
-      animation: active-node 1.5s infinite;
+    .break-dot.completed {
+      background: linear-gradient(135deg, var(--tertiary-color), #fbbf24);
+      border-color: var(--tertiary-color);
+      box-shadow: var(--shadow-md);
     }
 
-    @keyframes active-node {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.3); }
+    .break-dot.completed::before {
+      transform: translate(-50%, -50%) scale(1);
+      background: white;
     }
 
-    .alert-card {
+    .break-dot.current {
+      background: linear-gradient(135deg, var(--warning-color), #fbbf24);
+      border-color: var(--warning-color);
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), var(--shadow-lg);
+      animation: pulseGlow 2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2), var(--shadow-lg);
+      }
+      50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.3), var(--shadow-xl);
+      }
+    }
+
+    /* Streak Visualization - Enhanced */
+    .streak-visualization {
+      display: flex;
+      gap: var(--spacing-sm);
+      justify-content: center;
+      margin-bottom: var(--spacing-md);
+      padding: var(--spacing-sm);
+    }
+
+    .streak-day {
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .streak-day:hover {
+      transform: scale(1.2);
+    }
+
+    .day-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--gray-200);
+      border: 2px solid var(--gray-300);
+      transition: all 0.3s ease;
       position: relative;
     }
 
-    .alert-pulse {
+    .day-dot::after {
+      content: '';
       position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      border: 2px solid #ff4444;
-      animation: alert-pulse-anim 1s infinite;
-      pointer-events: none;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      background: var(--success-color);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.3s ease;
     }
 
-    @keyframes alert-pulse-anim {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.02); }
-      100% { opacity: 1; transform: scale(1); }
+    .streak-day.completed .day-dot {
+      background: linear-gradient(135deg, var(--success-color), #22d3ee);
+      border-color: var(--success-color);
+      box-shadow: var(--shadow-sm);
     }
 
-    .alert-message {
-      font-size: 0.8rem;
-      color: #ff4444;
-      font-weight: 600;
-      margin-top: 0.5rem;
-      font-family: 'Roboto Mono', monospace;
-      text-transform: uppercase;
-      animation: alert-text 2s infinite;
+    .streak-day.completed .day-dot::after {
+      transform: translate(-50%, -50%) scale(1);
+      background: white;
     }
 
-    @keyframes alert-text {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
+    /* Alert Section - Modern Design */
+    .alert-section {
+      margin-bottom: var(--spacing-2xl);
     }
 
-    /* Alert Banner */
-    .alert-banner {
-      background: linear-gradient(90deg, #fef3c7, #fef9c3);
-      border: 1px solid #f59e0b;
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
-      margin-bottom: 2rem;
+    .alerts-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .alert-card {
+      background: var(--surface-elevated);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .alert-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--warning-color);
+    }
+
+    .alert-warning {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, rgba(245, 158, 11, 0.05) 100%);
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    .alert-warning::before {
+      background: linear-gradient(135deg, var(--warning-color), #fbbf24);
+    }
+
+    .alert-danger {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+
+    .alert-danger::before {
+      background: linear-gradient(135deg, var(--danger-color), #dc2626);
+    }
+
+    .alert-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--gray-300);
+    }
+
+    .alert-header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      padding: var(--spacing-lg);
+      position: relative;
+    }
+
+    .alert-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--border-radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--warning-color), #fbbf24);
+      color: white;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s ease;
+    }
+
+    .alert-card:hover .alert-icon {
+      transform: scale(1.1) rotate(5deg);
     }
 
     .alert-content {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .alert-content ion-icon {
-      color: #f59e0b;
-      font-size: 1.25rem;
-      flex-shrink: 0;
-    }
-
-    .alert-text {
       flex: 1;
     }
 
-    .alert-text strong {
-      color: #92400e;
+    .alert-content h4 {
+      color: var(--gray-900);
       font-weight: 700;
-      display: block;
-      margin-bottom: 0.25rem;
+      font-size: var(--font-size-lg);
+      margin: 0 0 var(--spacing-sm) 0;
+      letter-spacing: -0.025em;
     }
 
-    .alert-text span {
-      color: #a16207;
-      font-size: 0.875rem;
-    }
-
-    .alert-action {
-      --color: #f59e0b;
-      font-weight: 600;
-    }
-
-    /* Statistics Section */
-    .stats-section {
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-    }
-
-    .section-header h2 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #1e293b;
+    .alert-content p {
+      color: var(--gray-700);
+      line-height: 1.6;
       margin: 0;
+      font-size: var(--font-size-base);
     }
 
-    .period-selector {
+    .alert-actions {
       display: flex;
-      gap: 1rem;
+      gap: var(--spacing-md);
+      justify-content: flex-end;
+      padding: 0 var(--spacing-lg) var(--spacing-lg);
     }
 
-    .period-selector span {
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
+    .alert-actions ion-button {
+      --border-radius: var(--border-radius-lg);
       font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
     }
 
-    .period-selector span.active {
-      background: #3b82f6;
+    .alert-actions ion-button:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Activities Section - Enhanced */
+    .activities-section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .schedule-card,
+    .progress-card {
+      background: var(--surface-elevated);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .schedule-card:hover,
+    .progress-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--gray-300);
+    }
+
+    .schedule-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+      padding: var(--spacing-md);
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: var(--spacing-lg);
+      padding: var(--spacing-lg);
+      border-radius: var(--border-radius-lg);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--gray-200);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--gray-300);
+      transition: background 0.3s ease;
+    }
+
+    .timeline-item.completed {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.08) 100%);
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .timeline-item.completed::before {
+      background: linear-gradient(135deg, var(--success-color), #22d3ee);
+    }
+
+    .timeline-item.current {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.08) 100%);
+      border-color: rgba(245, 158, 11, 0.2);
+      animation: currentItemGlow 3s ease-in-out infinite;
+    }
+
+    .timeline-item.current::before {
+      background: linear-gradient(135deg, var(--warning-color), #fbbf24);
+    }
+
+    @keyframes currentItemGlow {
+      0%, 100% {
+        box-shadow: var(--shadow-md);
+      }
+      50% {
+        box-shadow: 0 8px 25px -5px rgba(245, 158, 11, 0.3), var(--shadow-lg);
+      }
+    }
+
+    .timeline-time {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
       color: white;
-    }
-
-    .period-selector span:not(.active) {
-      color: #64748b;
-    }
-
-    .period-selector span:not(.active):hover {
-      background: #f1f5f9;
-      color: #1e293b;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .stat-item {
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--border-radius-lg);
+      font-weight: 700;
+      font-size: var(--font-size-sm);
+      min-width: 72px;
+      text-align: center;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1.5rem;
-      background: #f8fafc;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
+      justify-content: center;
     }
 
-    .stat-icon {
+    .timeline-item:hover .timeline-time {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .timeline-content {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      flex: 1;
+    }
+
+    .activity-icon {
       width: 40px;
       height: 40px;
-      border-radius: 10px;
-      background: #3b82f6;
+      border-radius: var(--border-radius-lg);
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       flex-shrink: 0;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
     }
 
-    .stat-content {
+    .timeline-item:hover .activity-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .activity-details {
       flex: 1;
     }
 
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #1e293b;
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-      color: #64748b;
-      font-size: 0.875rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-change {
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .stat-change.positive { color: #22c55e; }
-    .stat-change.negative { color: #ef4444; }
-
-    /* Quick Actions */
-    .quick-actions {
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .quick-actions h3 {
-      font-size: 1.125rem;
+    .activity-details h4 {
+      color: var(--gray-900);
       font-weight: 700;
-      color: #1e293b;
-      margin: 0 0 1.5rem;
+      margin: 0 0 var(--spacing-sm) 0;
+      font-size: var(--font-size-lg);
+      letter-spacing: -0.025em;
     }
 
-    .action-buttons {
+    .activity-details p {
+      color: var(--gray-700);
+      font-size: var(--font-size-sm);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .activity-status {
+      flex-shrink: 0;
+    }
+
+    /* Weekly Stats - Enhanced */
+    .weekly-stats {
       display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: var(--spacing-lg);
     }
 
-    .action-btn {
-      --border-radius: 12px;
-      --padding-start: 1.5rem;
-      --padding-end: 1.5rem;
-      height: 48px;
-      font-weight: 600;
+    .weekly-stats .stat-item {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--spacing-lg);
+      padding: var(--spacing-lg);
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--border-radius-lg);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
 
-    .action-btn.primary {
-      --background: #3b82f6;
+    .weekly-stats .stat-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .weekly-stats .stat-item:hover {
+      background: white;
+      border-color: var(--gray-300);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .weekly-stats .stat-item:hover::before {
+      opacity: 1;
+    }
+
+    .weekly-stats .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--border-radius-lg);
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+
+    .weekly-stats .stat-item:hover .stat-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .weekly-stats .stat-content {
+      flex: 1;
+    }
+
+    .weekly-stats .stat-value {
+      font-size: var(--font-size-2xl);
+      font-weight: 900;
+      color: var(--gray-900);
+      margin-bottom: var(--spacing-xs);
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, var(--gray-900), var(--gray-700));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .weekly-stats .stat-label {
+      color: var(--gray-700);
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      margin-bottom: var(--spacing-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .weekly-stats .stat-change {
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .weekly-stats .stat-change.positive {
+      color: var(--success-color);
+      background: rgba(16, 185, 129, 0.1);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--border-radius-xs);
+    }
+
+    /* Quick Actions - Enhanced */
+    .quick-actions-section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .action-button {
+      --border-radius: var(--border-radius-lg);
+      height: 64px;
+      font-weight: 700;
+      font-size: var(--font-size-base);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .action-button:hover::before {
+      left: 100%;
+    }
+
+    .primary-action {
+      --background: var(--primary-gradient);
       --color: white;
     }
 
-    .action-btn.secondary {
-      --border-color: #d1d5db;
-      --color: #374151;
+    .primary-action:hover {
+      --background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    }
+
+    .secondary-action {
+      --border-color: var(--secondary-color);
+      --color: var(--secondary-color);
+      background: rgba(6, 182, 212, 0.05);
+    }
+
+    .secondary-action:hover {
+      background: rgba(6, 182, 212, 0.1);
+      --border-color: var(--secondary-light);
+    }
+
+    .tertiary-action {
+      --border-color: var(--tertiary-color);
+      --color: var(--tertiary-color);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .tertiary-action:hover {
+      background: rgba(245, 158, 11, 0.1);
+      --border-color: #fbbf24;
+    }
+
+    .quaternary-action {
+      --border-color: var(--gray-600);
+      --color: var(--gray-700);
+      background: var(--gray-50);
+    }
+
+    .quaternary-action:hover {
+      background: var(--gray-100);
+      --border-color: var(--gray-700);
+    }
+
+    .action-button:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--shadow-xl);
     }
 
     /* Responsive Design */
     @media (max-width: 768px) {
-      .header-content {
+      .content {
+        padding: var(--spacing-sm);
+      }
+
+      .welcome-section {
         flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
+        text-align: center;
+        gap: var(--spacing-md);
       }
 
-      .main-content {
-        padding: 1rem;
+      .welcome-content h1 {
+        font-size: 1.5rem;
       }
 
-      .metrics-row {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-
-      .metric-card {
-        padding: 1.5rem;
-      }
-
-      .section-header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-
-      .action-buttons {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-
-      .action-btn {
-        width: 100%;
+      .current-time {
+        align-self: stretch;
         justify-content: center;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+      }
+
+      .metric-value .value {
+        font-size: 2rem;
+      }
+
+      .timeline-item {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .timeline-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+      }
+
+      .alert-header {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+      }
+
+      .alert-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .weekly-stats .stat-item {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .action-button {
         height: 52px;
         font-size: 1rem;
       }
+    }
 
-      /* Better mobile metric cards */
+    @media (max-width: 480px) {
+      .brand-logo {
+        width: 40px;
+        height: 40px;
+      }
+
+      .brand-name {
+        font-size: 1.25rem;
+      }
+
+      .status-badge {
+        padding: var(--spacing-xs);
+        font-size: 0.75rem;
+      }
+
+      .welcome-section {
+        padding: var(--spacing-lg);
+      }
+
+      .welcome-content h1 {
+        font-size: 1.25rem;
+      }
+
+      .metric-card {
+        margin-bottom: var(--spacing-md);
+      }
+
       .metric-header {
-        margin-bottom: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
       }
 
       .metric-icon {
@@ -1041,118 +1578,154 @@ import {
         font-size: 1.25rem;
       }
 
-      .metric-value {
-        font-size: 2rem;
-        line-height: 1.1;
+      .timeline-time {
+        min-width: 50px;
+        font-size: 0.75rem;
       }
 
-      /* Compact alert banner for mobile */
-      .alert-content {
-        flex-direction: column;
-        gap: 0.75rem;
-        text-align: center;
-      }
-
-      .alert-action {
-        width: 100%;
+      .activity-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.875rem;
       }
     }
-
-    @media (max-width: 480px) {
-      .header {
-        padding: 1.5rem 0 1rem;
-      }
-
-      .header-content {
-        padding: 0 1rem;
-      }
-
-      .header-left h1 {
-        font-size: 1.5rem;
-      }
-
-      .metric-value {
-        font-size: 2rem;
-      }
-
-      .stats-section,
-      .quick-actions {
-        padding: 1.5rem;
-      }
-    }
-  `],
-  animations: [
-    trigger('slideIn', [
-      transition(':enter', [
-        style({ transform: 'translateX(-100%)', opacity: 0 }),
-        animate('0.5s ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-      ])
-    ])
-  ]
+  `]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  // Basic data properties
+  // User data
+  userName = 'Pengguna';
+
+  // Metrics data
   postureScore = 85;
-  activeWarnings = 2;
-  latestWarningMessage = 'Poor posture detected';
-  lastWarningTime = new Date();
-  activeTime = '6.5h';
+  activeHours = 6.5;
   timeProgressPercent = 81;
   breaksToday = 5;
-  currentStatus = 'status-good';
-  currentStatusText = 'Good Posture';
+  streakDays = 12;
+  trendValue = 5.2;
+  currentStatusText = 'Postur Baik';
+
+  // Helper arrays
+  breakNumbers = Array.from({length: 8}, (_, i) => i + 1);
+  recentDays = Array.from({length: 7}, (_, i) => ({
+    completed: i < 5
+  }));
+
+  // Alert data
+  currentAlerts = [
+    {
+      title: 'Waktu Istirahat',
+      message: 'Sudah 2 jam sejak istirahat terakhir. Saatnya untuk peregangan!',
+      icon: 'time-outline',
+      type: 'warning',
+      priority: 'Medium',
+      actions: [
+        { label: 'Istirahat Sekarang', icon: 'pause-outline', action: 'take-break', primary: true },
+        { label: 'Ingatkan 15 menit lagi', icon: 'time-outline', action: 'snooze', primary: false }
+      ]
+    },
+    {
+      title: 'Postur Kurang Baik',
+      message: 'Postur duduk Anda terdeteksi kurang ergonomis dalam 10 menit terakhir.',
+      icon: 'warning-outline',
+      type: 'danger',
+      priority: 'High',
+      actions: [
+        { label: 'Koreksi Postur', icon: 'body-outline', action: 'correct-posture', primary: true }
+      ]
+    }
+  ];
+
+  // Schedule data
+  todaySchedule = [
+    {
+      time: '09:00',
+      title: 'Setup Workstation',
+      description: 'Atur posisi monitor dan kursi untuk memulai hari',
+      icon: 'desktop-outline',
+      completed: true,
+      current: false
+    },
+    {
+      time: '10:30',
+      title: 'Peregangan Pagi',
+      description: 'Latihan peregangan leher dan bahu',
+      icon: 'body-outline',
+      completed: true,
+      current: false
+    },
+    {
+      time: '12:00',
+      title: 'Break Makan Siang',
+      description: 'Istirahat makan dengan berjalan kaki ringan',
+      icon: 'cafe-outline',
+      completed: false,
+      current: true
+    },
+    {
+      time: '14:30',
+      title: 'Micro Break',
+      description: 'Istirahat 5 menit untuk mata dan postur',
+      icon: 'eye-outline',
+      completed: false,
+      current: false
+    },
+    {
+      time: '16:00',
+      title: 'Hydration & Exercise',
+      description: 'Minum air dan breathing exercise',
+      icon: 'heart-outline',
+      completed: false,
+      current: false
+    },
+    {
+      time: '17:30',
+      title: 'Evaluasi Harian',
+      description: 'Review postur dan catat perbaikan yang diperlukan',
+      icon: 'checkmark-circle-outline',
+      completed: false,
+      current: false
+    }
+  ];
+
+  // Weekly stats
+  weeklyStats = {
+    averageScore: 82,
+    totalBreaks: 38,
+    exercisesCompleted: 24
+  };
 
   constructor() {
-    // Add icons to the icon registry
     addIcons({
-      'analytics-outline': analyticsOutline,
-      'time-outline': timeOutline,
-      'refresh-outline': refreshOutline,
-      'warning-outline': warningOutline,
-      'trending-up-outline': trendingUpOutline,
-      'alert-circle-outline': alertCircleOutline,
-      'settings-outline': settingsOutline,
-      'person-outline': personOutline,
-      'notifications-outline': notificationsOutline,
-      'help-outline': helpOutline,
-      'scan-outline': scanOutline,
-      'terminal-outline': terminalOutline,
-      'pause-outline': pauseOutline,
-      'document-text-outline': documentTextOutline,
-      'trophy-outline': trophyOutline,
-      'cafe-outline': cafeOutline,
-      'shield-checkmark-outline': shieldCheckmarkOutline
+      analyticsOutline,
+      timeOutline,
+      refreshOutline,
+      warningOutline,
+      trendingUpOutline,
+      alertCircleOutline,
+      settingsOutline,
+      personOutline,
+      notificationsOutline,
+      helpOutline,
+      scanOutline,
+      terminalOutline,
+      pauseOutline,
+      documentTextOutline,
+      trophyOutline,
+      cafeOutline,
+      shieldCheckmarkOutline,
+      heartOutline,
+      bodyOutline,
+      fitnessOutline,
+      eyeOutline,
+      checkmarkCircleOutline,
+      homeOutline,
+      statsChartOutline,
+      flashOutline,
+      starOutline,
+      calendarOutline,
+      timerOutline
     });
-
-    console.log('ErgoFit Dashboard initialized with icons');
   }
-
-  // Futuristic UI properties
-  neuralSyncStatus = 97;
-  trendValue = 5.2;
-  particleArray = Array.from({length: 20}, (_, i) => i);
-  networkNodes = [
-    {x: 10, y: 20, delay: 0},
-    {x: 30, y: 50, delay: 1},
-    {x: 60, y: 30, delay: 2},
-    {x: 80, y: 70, delay: 1.5},
-    {x: 45, y: 80, delay: 0.5},
-    {x: 70, y: 15, delay: 2.5}
-  ];
-
-  quickAccessItems = [
-    {icon: 'analytics-outline', label: 'Analytics', action: 'analyze', active: true},
-    {icon: 'person-outline', label: 'Profile', action: 'profile', active: false},
-    {icon: 'notifications-outline', label: 'Alerts', action: 'alerts', active: false},
-    {icon: 'settings-outline', label: 'Settings', action: 'config', active: false},
-    {icon: 'help-outline', label: 'Help', action: 'help', active: false}
-  ];
-
-  weeklyStats = {
-    averageScore: 78,
-    totalBreaks: 35,
-    totalWarnings: 12
-  };
 
   ngOnInit() {
     this.simulateRealTimeData();
@@ -1160,65 +1733,74 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {}
 
-  formatTime(date: Date): string {
-    return date.toLocaleTimeString('id-ID', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+  getGreeting(): string {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Pagi';
+    if (hour < 17) return 'Siang';
+    return 'Sore';
+  }
+
+  getCurrentTime(): string {
+    return new Date().toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
+  }
+
+  getStatusColor(): string {
+    if (this.postureScore >= 80) return 'success';
+    if (this.postureScore >= 60) return 'warning';
+    return 'danger';
+  }
+
+  getPostureStatus(): string {
+    if (this.postureScore >= 85) return 'Excellent';
+    if (this.postureScore >= 70) return 'Good';
+    if (this.postureScore >= 50) return 'Fair';
+    return 'Poor';
+  }
+
+  getBreakStatus(): string {
+    const percentage = (this.breaksToday / 8) * 100;
+    if (percentage >= 100) return 'Target tercapai!';
+    if (percentage >= 75) return 'Hampir tercapai';
+    if (percentage >= 50) return 'Setengah jalan';
+    return 'Perlu lebih banyak break';
   }
 
   startQuickBreak() {
     console.log('Starting quick break...');
+    // Implement break functionality
   }
 
-  // Futuristic UI methods
-  getCurrentTime(): string {
-    return new Date().toLocaleTimeString('en-US', {
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  }
-
-  getPostureStatus(): string {
-    if (this.postureScore >= 85) return 'OPTIMAL';
-    if (this.postureScore >= 70) return 'STABLE';
-    if (this.postureScore >= 50) return 'DEGRADED';
-    return 'CRITICAL';
-  }
-
-  toggleScanMode() {
-    console.log('Scan mode toggled');
-    // Add scan mode logic here
-  }
-
-  openTerminal() {
-    console.log('Terminal opened');
-    // Add terminal logic here
-  }
-
-  executeQuickAction(action: string) {
-    // Update active state
-    this.quickAccessItems.forEach(item => item.active = item.action === action);
-    console.log('Executing action:', action);
+  handleAlertAction(action: string) {
+    console.log('Alert action:', action);
+    switch (action) {
+      case 'take-break':
+        this.startQuickBreak();
+        break;
+      case 'snooze':
+        // Implement snooze functionality
+        break;
+      case 'correct-posture':
+        // Implement posture correction guidance
+        break;
+    }
   }
 
   private simulateRealTimeData() {
     setInterval(() => {
-      this.postureScore = Math.floor(Math.random() * 20) + 70;
-      this.activeWarnings = Math.floor(Math.random() * 4);
-      
-      if (this.postureScore > 80) {
-        this.currentStatus = 'status-good';
-        this.currentStatusText = 'Good Posture';
-      } else if (this.postureScore > 60) {
-        this.currentStatus = 'status-warning';
-        this.currentStatusText = 'Fair Posture';
+      // Simulate slight variations in posture score
+      this.postureScore = Math.max(70, Math.min(95, this.postureScore + (Math.random() - 0.5) * 10));
+
+      // Update status text based on score
+      if (this.postureScore >= 80) {
+        this.currentStatusText = 'Postur Baik';
+      } else if (this.postureScore >= 60) {
+        this.currentStatusText = 'Postur Cukup';
       } else {
-        this.currentStatus = 'status-danger';
-        this.currentStatusText = 'Poor Posture';
+        this.currentStatusText = 'Postur Kurang';
       }
-    }, 5000);
+    }, 10000); // Update every 10 seconds
   }
 }

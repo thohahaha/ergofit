@@ -5,7 +5,8 @@ import {
   IonContent,
   IonButton,
   IonIcon,
-  IonText
+  IonText,
+  IonImg
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -23,7 +24,8 @@ import {
     IonContent,
     IonButton,
     IonIcon,
-    IonText
+    IonText,
+    IonImg
   ],
   template: `
     <ion-content class="get-started-content">
@@ -32,7 +34,7 @@ import {
       <div class="hero-section">
         <div class="logo-container">
           <div class="app-logo">
-            <ion-icon name="body-outline" class="logo-icon"></ion-icon>
+            <ion-img src="assets/logo/logo ergofit.jpg" alt="ErgoFit Logo" class="logo-image"></ion-img>
           </div>
           <h1>ErgoFit</h1>
           <p class="tagline">Smart Posture Monitor</p>
@@ -163,11 +165,20 @@ import {
       margin-bottom: 16px;
       box-shadow: var(--ergofit-card-shadow);
       border: var(--ergofit-card-border);
+      overflow: hidden;
+      position: relative;
     }
 
     .logo-icon {
       font-size: 2.5rem;
       color: var(--ergofit-primary);
+    }
+
+    .logo-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
     .hero-section h1 {
@@ -298,10 +309,18 @@ import {
       .app-logo {
         width: 60px;
         height: 60px;
+        overflow: hidden;
       }
 
       .logo-icon {
         font-size: 2rem;
+      }
+
+      .logo-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
       }
     }
   `]

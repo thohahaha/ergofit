@@ -5,9 +5,6 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
   IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonButton,
   IonIcon,
   IonItem,
@@ -20,9 +17,7 @@ import {
   IonRange,
   IonAvatar,
   IonSegment,
-  IonSegmentButton,
-  IonBackButton,
-  IonButtons
+  IonSegmentButton
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -49,9 +44,6 @@ import { ProfileService, ErgoFitUserProfile } from '../../services/profile.servi
     CommonModule,
     FormsModule,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonButton,
     IonIcon,
     IonItem,
@@ -64,9 +56,7 @@ import { ProfileService, ErgoFitUserProfile } from '../../services/profile.servi
     IonRange,
     IonAvatar,
     IonSegment,
-    IonSegmentButton,
-    IonBackButton,
-    IonButtons
+    IonSegmentButton
   ],
   templateUrl: './profile-settings.component.html',
   styleUrls: ['./profile-settings.component.scss']
@@ -97,19 +87,19 @@ export class ProfileSettingsComponent implements OnInit, OnDestroy {
     private profileService: ProfileService
   ) {
     addIcons({
-      'arrow-back-outline': arrowBackOutline,
-      'person-outline': personOutline,
-      'lock-closed-outline': lockClosedOutline,
-      'notifications-outline': notificationsOutline,
-      'color-palette-outline': colorPaletteOutline,
-      'shield-checkmark-outline': shieldCheckmarkOutline,
-      'cloud-upload-outline': cloudUploadOutline,
-      'download-outline': downloadOutline,
-      'trash-outline': trashOutline,
-      'camera-outline': cameraOutline,
-      'save-outline': saveOutline,
-      'eye-outline': eyeOutline,
-      'eye-off-outline': eyeOffOutline
+      arrowBackOutline,
+      saveOutline,
+      personOutline,
+      notificationsOutline,
+      lockClosedOutline,
+      cloudUploadOutline,
+      cameraOutline,
+      downloadOutline,
+      trashOutline,
+      colorPaletteOutline,
+      shieldCheckmarkOutline,
+      eyeOutline,
+      eyeOffOutline
     });
   }
 

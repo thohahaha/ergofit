@@ -5,11 +5,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonIcon,
-  IonLabel,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButton
+  IonLabel
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -18,10 +14,8 @@ import {
   barChartOutline,
   bulbOutline,
   settingsOutline,
-  logOutOutline,
   personOutline
 } from 'ionicons/icons';
-import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-tabs',
@@ -32,25 +26,9 @@ import { AuthService } from '../services/auth.service';
     IonTabBar,
     IonTabButton,
     IonIcon,
-    IonLabel,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButton
+    IonLabel
   ],
   template: `
-    <ion-header class="ergofit-header">
-      <ion-toolbar>
-        <ion-title>ErgoFit</ion-title>
-        <ion-button
-          slot="end"
-          fill="clear"
-          class="logout-button"
-          (click)="logout()">
-          <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
-        </ion-button>
-      </ion-toolbar>
-    </ion-header>
 
     <ion-tabs>
       <ion-tab-bar slot="bottom" class="ergofit-tab-bar">
@@ -93,57 +71,15 @@ import { AuthService } from '../services/auth.service';
       height: 100vh;
     }
 
-    .ergofit-header {
-      position: fixed !important;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 9999 !important;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-      box-shadow: 0 4px 20px rgba(103, 58, 183, 0.4);
-    }
-
-    .ergofit-header ion-toolbar {
-      --background: transparent;
-      --color: white;
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      height: 60px;
-      --min-height: 60px;
-    }
-
-    .ergofit-header ion-title {
-      color: white;
-      font-weight: 700;
-      font-size: 1.3rem;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      letter-spacing: 0.5px;
-    }
-
-    .logout-button {
-      --color: white;
-      --background: rgba(255, 255, 255, 0.1);
-      --border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      transition: all 0.3s ease;
-    }
-
-    .logout-button:hover {
-      --background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.1);
-    }
-
     ion-tabs {
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding-top: 56px; /* Height of header */
     }
 
     ion-tabs router-outlet {
       flex: 1;
-      padding-bottom: 56px; /* Height of tab bar */
+      padding-bottom: 70px; /* Height of tab bar */
     }
 
     ion-tab-bar {
@@ -151,43 +87,55 @@ import { AuthService } from '../services/auth.service';
       bottom: 0;
       left: 0;
       right: 0;
-      z-index: 9999 !important;
-      --background: rgba(103, 58, 183, 0.98);
-      backdrop-filter: blur(15px);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      --color: rgba(255, 255, 255, 0.7);
-      --color-selected: #ffffff;
+      z-index: 100;
+      --background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      --color: #64748b;
+      --color-selected: #3b82f6;
+      height: 70px;
+      box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
     }
 
     ion-tab-button {
-      --color: rgba(255, 255, 255, 0.7);
-      --color-selected: #ffffff;
-      transition: all 0.3s ease;
+      --color: #64748b;
+      --color-selected: #3b82f6;
+      transition: all 0.2s ease;
+      --ripple-color: rgba(59, 130, 246, 0.2);
+      font-size: 0.75rem;
+      font-weight: 500;
     }
 
     ion-tab-button:hover {
-      --color: var(--ergofit-accent);
+      --color: #3b82f6;
+    }
+
+    ion-tab-button.tab-selected {
+      --color: #3b82f6;
+      font-weight: 600;
+    }
+
+    ion-tab-button ion-icon {
+      font-size: 1.3rem;
+      margin-bottom: 2px;
+    }
+
+    ion-tab-button ion-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
     }
   `]
 })
 export class TabsPage {
-  constructor(private authService: AuthService) {
+  constructor() {
     addIcons({
       'home-outline': homeOutline,
       'pulse-outline': pulseOutline,
       'bar-chart-outline': barChartOutline,
       'bulb-outline': bulbOutline,
       'settings-outline': settingsOutline,
-      'log-out-outline': logOutOutline,
       'person-outline': personOutline
     });
-  }
-
-  async logout() {
-    try {
-      await this.authService.signOut();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
   }
 }

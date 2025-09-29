@@ -2,9 +2,6 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonTabs,
   IonTabBar,
   IonTabButton,
@@ -28,9 +25,6 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonTabs,
     IonTabBar,
     IonTabButton,
@@ -40,12 +34,6 @@ import {
     IonFabButton
   ],
   template: `
-    <!-- Header -->
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{pageTitle}}</ion-title>
-      </ion-toolbar>
-    </ion-header>
 
     <!-- Tab Bar Navigation -->
     <ion-tabs>
@@ -107,28 +95,6 @@ import {
       --light-purple: #e1bee7;
     }
 
-    ion-header {
-      position: fixed !important;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 9999 !important;
-      width: 100%;
-    }
-
-    ion-toolbar {
-      --background: rgba(103, 58, 183, 0.95);
-      --color: white;
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      height: 60px;
-    }
-
-    ion-title {
-      font-weight: 600;
-      font-size: 1.2rem;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
 
     .tab-selected {
       --color-selected: var(--accent-purple);

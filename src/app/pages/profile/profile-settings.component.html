@@ -1,57 +1,39 @@
-<ion-header [translucent]="true" class="settings-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button
-        defaultHref="/profile"
-        [icon]="'arrow-back-outline'"
-        class="back-button">
-      </ion-back-button>
-    </ion-buttons>
-    <ion-title class="header-title">
-      <div class="title-content">
-        <span class="title-text">Profile Settings</span>
-        <div class="title-glow"></div>
-      </div>
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="saveAllSettings()" class="save-btn">
-        <ion-icon name="save-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<!-- Modern Header -->
+<div class="modern-header">
+  <div class="header-content">
+    <ion-button fill="clear" routerLink="/profile" class="back-button">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <h1 class="page-title">Profile Settings</h1>
+    <ion-button fill="clear" (click)="saveAllSettings()" class="save-button">
+      <ion-icon name="save-outline"></ion-icon>
+      <span>Save</span>
+    </ion-button>
+  </div>
+</div>
 
 <ion-content class="settings-content">
-  <!-- Navigation Tabs -->
+  <!-- Modern Navigation Tabs -->
   <div class="navigation-container">
-    <div class="nav-glow"></div>
     <ion-segment
       [(ngModel)]="activeSegment"
       class="settings-segment"
       (ionChange)="onSegmentChange($event)">
       <ion-segment-button value="profile" class="nav-btn">
-        <div class="nav-content">
-          <ion-icon name="person-outline" class="nav-icon"></ion-icon>
-          <ion-label class="nav-label">Profile</ion-label>
-        </div>
+        <ion-icon name="person-outline"></ion-icon>
+        <ion-label>Profile</ion-label>
       </ion-segment-button>
       <ion-segment-button value="preferences" class="nav-btn">
-        <div class="nav-content">
-          <ion-icon name="notifications-outline" class="nav-icon"></ion-icon>
-          <ion-label class="nav-label">Preferences</ion-label>
-        </div>
+        <ion-icon name="notifications-outline"></ion-icon>
+        <ion-label>Preferences</ion-label>
       </ion-segment-button>
       <ion-segment-button value="security" class="nav-btn">
-        <div class="nav-content">
-          <ion-icon name="lock-closed-outline" class="nav-icon"></ion-icon>
-          <ion-label class="nav-label">Security</ion-label>
-        </div>
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <ion-label>Security</ion-label>
       </ion-segment-button>
       <ion-segment-button value="data" class="nav-btn">
-        <div class="nav-content">
-          <ion-icon name="cloud-upload-outline" class="nav-icon"></ion-icon>
-          <ion-label class="nav-label">Data</ion-label>
-        </div>
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+        <ion-label>Data</ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
@@ -61,25 +43,23 @@
     <!-- Profile Settings -->
     <div class="settings-section" *ngIf="activeSegment === 'profile'">
 
-      <!-- Avatar & Basic Info -->
-      <div class="profile-card futuristic-card">
-        <div class="card-glow"></div>
+      <!-- Profile Card -->
+      <div class="profile-card">
         <div class="avatar-section">
           <div class="avatar-container">
-            <div class="avatar-glow-ring"></div>
             <ion-avatar class="user-avatar">
               <img [src]="userProfile?.photoURL || 'https://ionicframework.com/docs/img/demos/avatar.svg'"
                    [alt]="userProfile?.displayName + ' Avatar'">
             </ion-avatar>
             <ion-button
-              class="change-avatar-btn futuristic-btn"
+              class="change-avatar-btn"
               fill="clear"
               size="small"
               (click)="changeAvatar()">
               <ion-icon name="camera-outline"></ion-icon>
-              <div class="btn-glow"></div>
             </ion-button>
           </div>
+
           <div class="user-info">
             <h2 class="user-name">{{userProfile?.displayName || 'User'}}</h2>
             <p class="user-level">Level {{userProfile?.level || 1}} • {{userProfile?.title || 'Beginner'}}</p>
@@ -113,7 +93,7 @@
           </div>
 
           <div class="form-group">
-            <ion-item class="form-item">
+            <ion-item class="form-item readonly">
               <ion-label position="stacked">Email Address</ion-label>
               <ion-input
                 [value]="userProfile?.email || ''"
@@ -121,6 +101,7 @@
                 [readonly]="true"
                 placeholder="Email cannot be changed">
               </ion-input>
+              <ion-icon name="lock-closed-outline" slot="end" class="readonly-icon"></ion-icon>
             </ion-item>
           </div>
 
@@ -275,12 +256,12 @@
             <ion-item class="form-item">
               <ion-label>Color Theme</ion-label>
               <ion-select
-                [value]="userProfile?.preferences?.colorTheme || 'purple'"
+                [value]="userProfile?.preferences?.colorTheme || 'blue'"
                 (ionChange)="onColorThemeChange($event)">
-                <ion-select-option value="purple">Purple</ion-select-option>
-                <ion-select-option value="blue">Blue</ion-select-option>
-                <ion-select-option value="green">Green</ion-select-option>
-                <ion-select-option value="orange">Orange</ion-select-option>
+                <ion-select-option value="blue">Professional Blue</ion-select-option>
+                <ion-select-option value="dark">Dark Mode</ion-select-option>
+                <ion-select-option value="light">Light Mode</ion-select-option>
+                <ion-select-option value="teal">Teal</ion-select-option>
               </ion-select>
             </ion-item>
 

@@ -1,23 +1,37 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
   IonContent,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonChip,
+  IonButton,
   IonIcon,
-  IonLabel
+  IonChip,
+  IonLabel,
+  IonSegment,
+  IonSegmentButton,
+  IonToggle,
+  IonRange,
+  IonProgressBar
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   checkmarkCircleOutline,
   alertCircleOutline,
-  warningOutline
+  warningOutline,
+  playOutline,
+  pauseOutline,
+  stopOutline,
+  settingsOutline,
+  eyeOutline,
+  cameraOutline,
+  timerOutline,
+  statsChartOutline,
+  notificationsOutline,
+  bodyOutline,
+  shieldCheckmarkOutline,
+  pulseOutline,
+  refreshOutline,
+  informationCircleOutline
 } from 'ionicons/icons';
 
 @Component({
@@ -25,559 +39,1365 @@ import {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     IonContent,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonChip,
+    IonButton,
     IonIcon,
-    IonLabel
+    IonChip,
+    IonLabel,
+    IonSegment,
+    IonSegmentButton,
+    IonToggle,
+    IonRange,
+    IonProgressBar
   ],
   template: `
-    <ion-content class="ergofit-content" [fullscreen]="true" [scrollEvents]="true">
-      <!-- SVG Figure Manusia -->
-      <div class="body-figure-container">
-        <svg width="200" height="300" viewBox="0 0 200 300" class="body-figure">
-          <!-- Head -->
-          <circle cx="100" cy="40" r="25" [attr.fill]="getBodyPartColor('head')" stroke="#333" stroke-width="2"/>
+    <ion-content class="monitoring-content">
+      <div class="monitoring-container">
 
-          <!-- Neck -->
-          <rect x="95" y="65" width="10" height="20" [attr.fill]="getBodyPartColor('neck')" stroke="#333" stroke-width="2"/>
-
-          <!-- Shoulders -->
-          <rect x="70" y="85" width="60" height="15" [attr.fill]="getBodyPartColor('shoulders')" stroke="#333" stroke-width="2" rx="7"/>
-
-          <!-- Back/Spine -->
-          <rect x="95" y="100" width="10" height="80" [attr.fill]="getBodyPartColor('back')" stroke="#333" stroke-width="2"/>
-
-          <!-- Hips -->
-          <rect x="85" y="180" width="30" height="20" [attr.fill]="getBodyPartColor('hips')" stroke="#333" stroke-width="2" rx="10"/>
-
-          <!-- Arms -->
-          <rect x="50" y="90" width="15" height="60" [attr.fill]="getBodyPartColor('arms')" stroke="#333" stroke-width="2" rx="7"/>
-          <rect x="135" y="90" width="15" height="60" [attr.fill]="getBodyPartColor('arms')" stroke="#333" stroke-width="2" rx="7"/>
-
-          <!-- Legs -->
-          <rect x="90" y="200" width="8" height="80" [attr.fill]="getBodyPartColor('legs')" stroke="#333" stroke-width="2"/>
-          <rect x="102" y="200" width="8" height="80" [attr.fill]="getBodyPartColor('legs')" stroke="#333" stroke-width="2"/>
-        </svg>
-      </div>
-
-      <!-- Status Chip -->
-      <div class="status-chip-container">
-        <ion-chip [color]="postureChipColor" class="status-chip">
-          <ion-icon [name]="postureIcon"></ion-icon>
-          <ion-label>{{postureStatus}}</ion-label>
-        </ion-chip>
-      </div>
-
-      <!-- Grid 4 Kartu Metrik -->
-      <div class="ergofit-grid ergofit-grid-4">
-        <div class="ergofit-card">
-          <div class="ergofit-card-header">
-            <h3 class="ergofit-card-title">Leher</h3>
-          </div>
-          <div class="ergofit-card-content">
-            <div class="ergofit-metric">
-              <h2 [style.color]="getMetricColor(neckScore)">{{neckScore}}/10</h2>
-              <p>{{getNeckStatus()}}</p>
+        <!-- Header Section -->
+        <div class="monitoring-header">
+          <div class="header-content">
+            <div class="header-info">
+              <h1 class="page-title">Real-Time Monitoring</h1>
+              <p class="page-subtitle">Live posture analysis and ergonomic feedback</p>
             </div>
-          </div>
-        </div>
-
-        <div class="ergofit-card">
-          <div class="ergofit-card-header">
-            <h3 class="ergofit-card-title">Punggung</h3>
-          </div>
-          <div class="ergofit-card-content">
-            <div class="ergofit-metric">
-              <h2 [style.color]="getMetricColor(backScore)">{{backScore}}/10</h2>
-              <p>{{getBackStatus()}}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="ergofit-card">
-          <div class="ergofit-card-header">
-            <h3 class="ergofit-card-title">Bahu</h3>
-          </div>
-          <div class="ergofit-card-content">
-            <div class="ergofit-metric">
-              <h2 [style.color]="getMetricColor(shoulderScore)">{{shoulderScore}}/10</h2>
-              <p>{{getShoulderStatus()}}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="ergofit-card">
-          <div class="ergofit-card-header">
-            <h3 class="ergofit-card-title">Pinggul</h3>
-          </div>
-          <div class="ergofit-card-content">
-            <div class="ergofit-metric">
-              <h2 [style.color]="getMetricColor(hipScore)">{{hipScore}}/10</h2>
-              <p>{{getHipStatus()}}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Detail Monitoring per Bagian Tubuh -->
-      <div class="ergofit-card">
-        <div class="ergofit-card-header">
-          <h3 class="ergofit-card-title">Detail Monitoring</h3>
-        </div>
-        <div class="ergofit-card-content">
-          <div class="monitoring-details">
-            <div class="detail-item">
-              <div class="detail-header">
-                <h4>🦴 Posisi Leher</h4>
-                <span class="detail-score" [style.color]="getMetricColor(neckScore)">{{neckScore}}/10</span>
-              </div>
-              <p class="detail-description">
-                Leher Anda saat ini dalam posisi {{getNeckStatus().toLowerCase()}}. 
-                {{neckScore >= 8 ? 'Pertahankan posisi ini!' : neckScore >= 6 ? 'Sedikit tegakkan kepala.' : 'Segera perbaiki postur leher Anda.'}}
-              </p>
-            </div>
-
-            <div class="detail-item">
-              <div class="detail-header">
-                <h4>🫸 Posisi Punggung</h4>
-                <span class="detail-score" [style.color]="getMetricColor(backScore)">{{backScore}}/10</span>
-              </div>
-              <p class="detail-description">
-                Punggung Anda menunjukkan kondisi {{getBackStatus().toLowerCase()}}.
-                {{backScore >= 8 ? 'Postur punggung sangat baik!' : backScore >= 6 ? 'Pastikan punggung tersandar di kursi.' : 'Hindari membungkuk terlalu lama.'}}
-              </p>
-            </div>
-
-            <div class="detail-item">
-              <div class="detail-header">
-                <h4>💪 Posisi Bahu</h4>
-                <span class="detail-score" [style.color]="getMetricColor(shoulderScore)">{{shoulderScore}}/10</span>
-              </div>
-              <p class="detail-description">
-                Bahu Anda dalam kondisi {{getShoulderStatus().toLowerCase()}}.
-                {{shoulderScore >= 8 ? 'Bahu rileks dan sejajar!' : shoulderScore >= 6 ? 'Rilekskan bahu sedikit.' : 'Bahu terlalu tegang, perlu relaksasi.'}}
-              </p>
-            </div>
-
-            <div class="detail-item">
-              <div class="detail-header">
-                <h4>🪑 Posisi Pinggul</h4>
-                <span class="detail-score" [style.color]="getMetricColor(hipScore)">{{hipScore}}/10</span>
-              </div>
-              <p class="detail-description">
-                Pinggul Anda menunjukkan kondisi {{getHipStatus().toLowerCase()}}.
-                {{hipScore >= 8 ? 'Posisi duduk sempurna!' : hipScore >= 6 ? 'Duduk lebih tegak.' : 'Perbaiki posisi duduk Anda.'}}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Rekomendasi Real-time -->
-      <div class="ergofit-card">
-        <div class="ergofit-card-header">
-          <h3 class="ergofit-card-title">Rekomendasi Saat Ini</h3>
-        </div>
-        <div class="ergofit-card-content">
-          <div class="recommendations-list">
-            <div class="recommendation-item priority" *ngIf="getAverageScore() < 6">
-              <div class="recommendation-icon">🚨</div>
-              <div class="recommendation-content">
-                <h4>Prioritas Tinggi</h4>
-                <p>Postur Anda memerlukan perbaikan segera. Luangkan waktu untuk memperbaiki posisi duduk.</p>
-              </div>
-            </div>
-
-            <div class="recommendation-item" *ngIf="neckScore < 7">
-              <div class="recommendation-icon">🦴</div>
-              <div class="recommendation-content">
-                <h4>Perbaiki Postur Leher</h4>
-                <p>Tegakkan kepala dan pastikan monitor sejajar dengan mata untuk mengurangi tekanan pada leher.</p>
-              </div>
-            </div>
-
-            <div class="recommendation-item" *ngIf="backScore < 7">
-              <div class="recommendation-icon">🫸</div>
-              <div class="recommendation-content">
-                <h4>Dukungan Punggung</h4>
-                <p>Sandarkan punggung dengan baik ke kursi dan hindari membungkuk terlalu lama.</p>
-              </div>
-            </div>
-
-            <div class="recommendation-item" *ngIf="shoulderScore < 7">
-              <div class="recommendation-icon">💪</div>
-              <div class="recommendation-content">
-                <h4>Relaksasi Bahu</h4>
-                <p>Rilekskan bahu dan hindari mengangkat bahu terlalu tinggi saat mengetik.</p>
-              </div>
-            </div>
-
-            <div class="recommendation-item success" *ngIf="getAverageScore() >= 8">
-              <div class="recommendation-icon">✅</div>
-              <div class="recommendation-content">
-                <h4>Postur Sangat Baik!</h4>
-                <p>Pertahankan postur yang baik ini. Anda sedang berada dalam kondisi ergonomi yang optimal.</p>
+            <div class="header-status">
+              <div class="monitoring-status" [class.active]="isMonitoring">
+                <div class="status-indicator"></div>
+                <span>{{isMonitoring ? 'Active' : 'Inactive'}}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Riwayat Monitoring -->
-      <div class="ergofit-card">
-        <div class="ergofit-card-header">
-          <h3 class="ergofit-card-title">Riwayat 1 Jam Terakhir</h3>
+        <!-- Control Panel -->
+        <div class="control-panel">
+          <div class="control-header">
+            <h3 class="control-title">Monitoring Controls</h3>
+            <div class="session-timer">
+              <ion-icon name="timer-outline"></ion-icon>
+              <span>{{formatTime(sessionTime)}}</span>
+            </div>
+          </div>
+
+          <div class="control-actions">
+            <ion-button
+              [color]="isMonitoring ? 'danger' : 'primary'"
+              class="control-btn primary"
+              (click)="toggleMonitoring()">
+              <ion-icon [name]="isMonitoring ? 'pause-outline' : 'play-outline'" slot="start"></ion-icon>
+              {{isMonitoring ? 'Pause' : 'Start'}} Monitoring
+            </ion-button>
+
+            <ion-button
+              fill="outline"
+              color="medium"
+              class="control-btn"
+              (click)="stopMonitoring()"
+              [disabled]="!isMonitoring">
+              <ion-icon name="stop-outline" slot="start"></ion-icon>
+              Stop
+            </ion-button>
+
+            <ion-button
+              fill="outline"
+              color="medium"
+              class="control-btn"
+              (click)="openSettings()">
+              <ion-icon name="settings-outline" slot="start"></ion-icon>
+              Settings
+            </ion-button>
+          </div>
+
+          <div class="monitoring-settings">
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Detection Sensitivity</h4>
+                <p>Adjust posture detection sensitivity</p>
+              </div>
+              <ion-range
+                [(ngModel)]="sensitivity"
+                min="1"
+                max="10"
+                step="1"
+                pin="true"
+                class="sensitivity-range">
+                <ion-label slot="start">Low</ion-label>
+                <ion-label slot="end">High</ion-label>
+              </ion-range>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Real-time Alerts</h4>
+                <p>Get instant notifications for poor posture</p>
+              </div>
+              <ion-toggle
+                [(ngModel)]="realTimeAlerts"
+                class="alert-toggle">
+              </ion-toggle>
+            </div>
+          </div>
         </div>
-        <div class="ergofit-card-content">
-          <div class="history-timeline">
-            <div class="timeline-item">
-              <div class="timeline-time">14:45</div>
-              <div class="timeline-content">
-                <div class="timeline-scores">
-                  <span class="score-badge good">L:8</span>
-                  <span class="score-badge fair">P:6</span>
-                  <span class="score-badge good">B:9</span>
-                  <span class="score-badge fair">H:7</span>
+
+        <!-- Live Status Overview -->
+        <div class="status-overview">
+          <div class="overall-status-card">
+            <div class="status-header">
+              <div class="status-icon" [class]="getOverallStatusClass()">
+                <ion-icon [name]="getOverallStatusIcon()"></ion-icon>
+              </div>
+              <div class="status-info">
+                <h3 class="status-title">Overall Posture</h3>
+                <div class="status-score">{{getOverallScore()}}/100</div>
+                <div class="status-label" [class]="getOverallStatusClass()">{{getOverallStatusText()}}</div>
+              </div>
+            </div>
+            <div class="status-progress">
+              <ion-progress-bar
+                [value]="getOverallScore() / 100"
+                [color]="getOverallStatusColor()">
+              </ion-progress-bar>
+            </div>
+          </div>
+        </div>
+
+        <!-- Body Visualization -->
+        <div class="body-visualization">
+          <div class="visualization-header">
+            <h3 class="viz-title">Posture Visualization</h3>
+            <div class="viz-controls">
+              <ion-button fill="clear" size="small" class="viz-btn" (click)="toggleBodyView()">
+                <ion-icon name="eye-outline"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small" class="viz-btn" (click)="capturePosture()">
+                <ion-icon name="camera-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+
+          <div class="body-figure-container">
+            <svg width="200" height="300" viewBox="0 0 200 300" class="body-figure">
+              <!-- Head -->
+              <circle cx="100" cy="40" r="25" [attr.fill]="getBodyPartColor('head')" stroke="#e5e7eb" stroke-width="2"/>
+
+              <!-- Neck -->
+              <rect x="95" y="65" width="10" height="20" [attr.fill]="getBodyPartColor('neck')" stroke="#e5e7eb" stroke-width="2"/>
+
+              <!-- Shoulders -->
+              <rect x="70" y="85" width="60" height="15" [attr.fill]="getBodyPartColor('shoulders')" stroke="#e5e7eb" stroke-width="2" rx="7"/>
+
+              <!-- Back/Spine -->
+              <rect x="95" y="100" width="10" height="80" [attr.fill]="getBodyPartColor('back')" stroke="#e5e7eb" stroke-width="2"/>
+
+              <!-- Hips -->
+              <rect x="85" y="180" width="30" height="20" [attr.fill]="getBodyPartColor('hips')" stroke="#e5e7eb" stroke-width="2" rx="10"/>
+
+              <!-- Arms -->
+              <rect x="50" y="90" width="15" height="60" [attr.fill]="getBodyPartColor('arms')" stroke="#e5e7eb" stroke-width="2" rx="7"/>
+              <rect x="135" y="90" width="15" height="60" [attr.fill]="getBodyPartColor('arms')" stroke="#e5e7eb" stroke-width="2" rx="7"/>
+
+              <!-- Legs -->
+              <rect x="90" y="200" width="8" height="80" [attr.fill]="getBodyPartColor('legs')" stroke="#e5e7eb" stroke-width="2"/>
+              <rect x="102" y="200" width="8" height="80" [attr.fill]="getBodyPartColor('legs')" stroke="#e5e7eb" stroke-width="2"/>
+            </svg>
+
+            <div class="body-legend">
+              <div class="legend-item">
+                <div class="legend-color excellent"></div>
+                <span>Excellent</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color good"></div>
+                <span>Good</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color fair"></div>
+                <span>Fair</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-color poor"></div>
+                <span>Poor</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Metrics -->
+        <div class="detailed-metrics">
+          <div class="metrics-header">
+            <h3 class="metrics-title">Body Part Analysis</h3>
+            <div class="metrics-refresh">
+              <ion-button fill="clear" size="small" (click)="refreshMetrics()">
+                <ion-icon name="refresh-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card" [class]="getMetricStatusClass(neckScore)">
+              <div class="metric-header">
+                <div class="metric-icon">
+                  <ion-icon name="body-outline"></ion-icon>
                 </div>
-                <p>Postur membaik setelah istirahat</p>
+                <div class="metric-info">
+                  <h4 class="metric-title">Neck Position</h4>
+                  <div class="metric-value">{{neckScore}}<span class="metric-unit">/10</span></div>
+                </div>
+                <div class="metric-status">
+                  <ion-chip [color]="getMetricColor(neckScore)" class="status-chip">
+                    {{getStatusText(neckScore)}}
+                  </ion-chip>
+                </div>
+              </div>
+              <div class="metric-progress">
+                <ion-progress-bar [value]="neckScore / 10" [color]="getMetricColor(neckScore)"></ion-progress-bar>
+              </div>
+              <div class="metric-recommendation">
+                <p>{{getNeckRecommendation()}}</p>
               </div>
             </div>
 
-            <div class="timeline-item">
-              <div class="timeline-time">14:30</div>
-              <div class="timeline-content">
-                <div class="timeline-scores">
-                  <span class="score-badge poor">L:4</span>
-                  <span class="score-badge poor">P:5</span>
-                  <span class="score-badge fair">B:6</span>
-                  <span class="score-badge fair">H:6</span>
+            <div class="metric-card" [class]="getMetricStatusClass(shoulderScore)">
+              <div class="metric-header">
+                <div class="metric-icon">
+                  <ion-icon name="body-outline"></ion-icon>
                 </div>
-                <p>Peringatan: Postur buruk terdeteksi</p>
+                <div class="metric-info">
+                  <h4 class="metric-title">Shoulders</h4>
+                  <div class="metric-value">{{shoulderScore}}<span class="metric-unit">/10</span></div>
+                </div>
+                <div class="metric-status">
+                  <ion-chip [color]="getMetricColor(shoulderScore)" class="status-chip">
+                    {{getStatusText(shoulderScore)}}
+                  </ion-chip>
+                </div>
+              </div>
+              <div class="metric-progress">
+                <ion-progress-bar [value]="shoulderScore / 10" [color]="getMetricColor(shoulderScore)"></ion-progress-bar>
+              </div>
+              <div class="metric-recommendation">
+                <p>{{getShoulderRecommendation()}}</p>
               </div>
             </div>
 
-            <div class="timeline-item">
-              <div class="timeline-time">14:15</div>
-              <div class="timeline-content">
-                <div class="timeline-scores">
-                  <span class="score-badge good">L:8</span>
-                  <span class="score-badge good">P:8</span>
-                  <span class="score-badge good">B:9</span>
-                  <span class="score-badge good">H:8</span>
+            <div class="metric-card" [class]="getMetricStatusClass(backScore)">
+              <div class="metric-header">
+                <div class="metric-icon">
+                  <ion-icon name="body-outline"></ion-icon>
                 </div>
-                <p>Postur sangat baik - kondisi optimal</p>
+                <div class="metric-info">
+                  <h4 class="metric-title">Back Posture</h4>
+                  <div class="metric-value">{{backScore}}<span class="metric-unit">/10</span></div>
+                </div>
+                <div class="metric-status">
+                  <ion-chip [color]="getMetricColor(backScore)" class="status-chip">
+                    {{getStatusText(backScore)}}
+                  </ion-chip>
+                </div>
+              </div>
+              <div class="metric-progress">
+                <ion-progress-bar [value]="backScore / 10" [color]="getMetricColor(backScore)"></ion-progress-bar>
+              </div>
+              <div class="metric-recommendation">
+                <p>{{getBackRecommendation()}}</p>
               </div>
             </div>
 
-            <div class="timeline-item">
-              <div class="timeline-time">14:00</div>
-              <div class="timeline-content">
-                <div class="timeline-scores">
-                  <span class="score-badge fair">L:7</span>
-                  <span class="score-badge fair">P:7</span>
-                  <span class="score-badge good">B:8</span>
-                  <span class="score-badge good">H:8</span>
+            <div class="metric-card" [class]="getMetricStatusClass(hipScore)">
+              <div class="metric-header">
+                <div class="metric-icon">
+                  <ion-icon name="body-outline"></ion-icon>
                 </div>
-                <p>Sesi monitoring dimulai</p>
+                <div class="metric-info">
+                  <h4 class="metric-title">Hip Alignment</h4>
+                  <div class="metric-value">{{hipScore}}<span class="metric-unit">/10</span></div>
+                </div>
+                <div class="metric-status">
+                  <ion-chip [color]="getMetricColor(hipScore)" class="status-chip">
+                    {{getStatusText(hipScore)}}
+                  </ion-chip>
+                </div>
+              </div>
+              <div class="metric-progress">
+                <ion-progress-bar [value]="hipScore / 10" [color]="getMetricColor(hipScore)"></ion-progress-bar>
+              </div>
+              <div class="metric-recommendation">
+                <p>{{getHipRecommendation()}}</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Spacer untuk memastikan konten tidak tertutup navbar -->
-      <div class="content-spacer"></div>
+        <!-- Live Activity Feed -->
+        <div class="activity-feed">
+          <div class="feed-header">
+            <h3 class="feed-title">Live Activity Feed</h3>
+            <div class="feed-controls">
+              <ion-button fill="clear" size="small" (click)="clearFeed()">Clear</ion-button>
+            </div>
+          </div>
+
+          <div class="feed-content">
+            <div class="activity-item" *ngFor="let activity of activityFeed; trackBy: trackByActivity">
+              <div class="activity-time">{{formatTime(activity.timestamp)}}</div>
+              <div class="activity-content">
+                <div class="activity-icon" [class]="activity.type">
+                  <ion-icon [name]="getActivityIcon(activity.type)"></ion-icon>
+                </div>
+                <div class="activity-info">
+                  <h5 class="activity-title">{{activity.title}}</h5>
+                  <p class="activity-description">{{activity.description}}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="empty-feed" *ngIf="activityFeed.length === 0">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              <p>Start monitoring to see live posture updates</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+          <div class="stats-header">
+            <h3 class="stats-title">Session Statistics</h3>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon">
+                <ion-icon name="timer-outline"></ion-icon>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{formatTime(sessionTime)}}</div>
+                <div class="stat-label">Session Time</div>
+              </div>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-icon">
+                <ion-icon name="pulse-outline"></ion-icon>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{alertCount}}</div>
+                <div class="stat-label">Alerts Today</div>
+              </div>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-icon">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{goodPostureTime}}%</div>
+                <div class="stat-label">Good Posture</div>
+              </div>
+            </div>
+
+            <div class="stat-item">
+              <div class="stat-icon">
+                <ion-icon name="stats-chart-outline"></ion-icon>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value">{{improvementTrend > 0 ? '+' : ''}}{{improvementTrend}}%</div>
+                <div class="stat-label">Improvement</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </ion-content>
   `,
   styles: [`
+    /* ===== CSS VARIABLES ===== */
     :host {
+      --primary-color: #2563eb;
+      --primary-light: #3b82f6;
+      --secondary-color: #1e40af;
+      --accent-color: #06b6d4;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --info-color: #8b5cf6;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-light: #9ca3af;
+      --background-primary: #ffffff;
+      --background-secondary: #f8fafc;
+      --background-tertiary: #f1f5f9;
+      --border-color: #e5e7eb;
+      --border-light: #f3f4f6;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+
       display: block;
-      min-height: 100vh;
-      background: var(--ergofit-background-subtle) !important;
+      height: 100vh;
+      background: var(--background-secondary);
     }
 
-    ion-content {
-      --background: var(--ergofit-background-subtle) !important;
-      background: var(--ergofit-background-subtle) !important;
+    /* ===== CONTENT STYLING ===== */
+    .monitoring-content {
+      --background: var(--background-secondary);
+      --color: var(--text-primary);
     }
 
-    ion-content::part(background) {
-      background: var(--ergofit-background-subtle) !important;
+    .monitoring-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
     }
 
-    ion-content::part(scroll) {
-      background: var(--ergofit-background-subtle) !important;
+    /* ===== HEADER SECTION ===== */
+    .monitoring-header {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
     }
 
-    /* Force card backgrounds to be white */
-    .ergofit-card,
-    div.ergofit-card,
-    ion-content .ergofit-card {
-      background: white !important;
-      background-color: white !important;
+    .header-content {
+      padding: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
     }
 
-    .ergofit-card-title,
-    .ergofit-card h3 {
-      color: var(--ergofit-primary) !important;
+    .header-info {
+      flex: 1;
     }
 
-    .ergofit-metric h1,
-    .ergofit-metric h2 {
-      color: var(--ergofit-primary) !important;
+    .page-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
     }
 
-    .ergofit-metric p {
-      color: #666 !important;
+    .page-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+    }
+
+    .monitoring-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--background-tertiary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .monitoring-status.active {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--success-color);
+      color: var(--success-color);
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-light);
+    }
+
+    .monitoring-status.active .status-indicator {
+      background: var(--success-color);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* ===== CONTROL PANEL ===== */
+    .control-panel {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .control-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .control-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .session-timer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--background-secondary);
+      border-radius: var(--radius-md);
+      font-family: monospace;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .control-actions {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .control-btn {
+      height: 48px;
+      font-weight: 500;
+      --border-radius: var(--radius-lg);
+    }
+
+    .control-btn.primary {
+      min-width: 180px;
+    }
+
+    .monitoring-settings {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: var(--background-secondary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+    }
+
+    .setting-info {
+      flex: 1;
+      margin-right: 24px;
+    }
+
+    .setting-info h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px 0;
+    }
+
+    .setting-info p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .sensitivity-range {
+      min-width: 200px;
+    }
+
+    /* ===== STATUS OVERVIEW ===== */
+    .status-overview {
+      margin-bottom: 24px;
+    }
+
+    .overall-status-card {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .status-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .status-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: white;
+    }
+
+    .status-icon.excellent {
+      background: linear-gradient(135deg, var(--success-color), #059669);
+    }
+
+    .status-icon.good {
+      background: linear-gradient(135deg, #22c55e, var(--success-color));
+    }
+
+    .status-icon.fair {
+      background: linear-gradient(135deg, var(--warning-color), #d97706);
+    }
+
+    .status-icon.poor {
+      background: linear-gradient(135deg, var(--danger-color), #dc2626);
+    }
+
+    .status-info {
+      flex: 1;
+    }
+
+    .status-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
+    }
+
+    .status-score {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 4px 0;
+      line-height: 1;
+    }
+
+    .status-label {
+      font-size: 14px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: var(--radius-md);
+      display: inline-block;
+    }
+
+    .status-label.excellent {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+    }
+
+    .status-label.good {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+    }
+
+    .status-label.fair {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+    }
+
+    .status-label.poor {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger-color);
+    }
+
+    .status-progress {
+      margin-top: 16px;
+    }
+
+    .status-progress ion-progress-bar {
+      height: 8px;
+      --progress-background: var(--background-tertiary);
+    }
+
+    /* ===== BODY VISUALIZATION ===== */
+    .body-visualization {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .visualization-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .viz-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .viz-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .viz-btn {
+      --color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
     }
 
     .body-figure-container {
       text-align: center;
-      margin: var(--ergofit-spacing-lg) 0;
-      padding: var(--ergofit-spacing-lg);
-      background: rgba(108, 99, 255, 0.05);
-      border: 1px solid rgba(108, 99, 255, 0.1);
-      border-radius: var(--ergofit-card-radius-lg);
     }
 
     .body-figure {
-      filter: drop-shadow(0 4px 12px rgba(108, 99, 255, 0.15));
+      max-width: 100%;
+      height: auto;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
       transition: all 0.3s ease;
     }
 
-    .body-figure:hover {
-      transform: scale(1.02);
-    }
-
-    .status-chip-container {
-      text-align: center;
-      margin: var(--ergofit-spacing-lg) 0;
-    }
-
-    .status-chip {
-      padding: var(--ergofit-spacing-sm) var(--ergofit-spacing-lg);
-      font-size: var(--ergofit-font-size-md);
-      font-weight: 600;
-      --background: var(--ergofit-primary);
-      --color: white;
-      border-radius: var(--ergofit-card-radius-lg);
-      box-shadow: 0 4px 16px rgba(108, 99, 255, 0.2);
-    }
-
-    @media (max-width: 480px) {
-      .body-figure-container {
-        margin: var(--ergofit-spacing-md) 0;
-        padding: var(--ergofit-spacing-md);
-      }
-
-      .status-chip-container {
-        margin: var(--ergofit-spacing-md) 0;
-      }
-
-      svg {
-        width: 160px;
-        height: 240px;
-      }
-    }
-
-    .content-spacer {
-      height: 100px; /* Extra space untuk memastikan konten tidak tertutup navbar */
-    }
-
-    .monitoring-details {
+    .body-legend {
       display: flex;
-      flex-direction: column;
-      gap: var(--ergofit-spacing-lg);
-    }
-
-    .detail-item {
-      padding: var(--ergofit-spacing-md);
-      background: var(--ergofit-card-background-alt);
-      border: 1px solid rgba(108, 99, 255, 0.1);
-      border-radius: var(--ergofit-card-radius-sm);
-      border-left: 4px solid var(--ergofit-primary);
-    }
-
-    .detail-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--ergofit-spacing-sm);
-    }
-
-    .detail-header h4 {
-      color: var(--ergofit-primary) !important;
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .detail-score {
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
-
-    .detail-description {
-      color: #666 !important;
-      margin: 0;
-      line-height: 1.5;
-      font-size: 0.9rem;
-    }
-
-    .recommendations-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--ergofit-spacing-md);
-    }
-
-    .recommendation-item {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--ergofit-spacing-md);
-      padding: var(--ergofit-spacing-md);
-      background: var(--ergofit-card-background-alt);
-      border: 1px solid rgba(108, 99, 255, 0.1);
-      border-radius: var(--ergofit-card-radius-sm);
-      border-left: 4px solid var(--ergofit-primary);
-    }
-
-    .recommendation-item.priority {
-      border-left-color: #f04141;
-      background: rgba(240, 65, 65, 0.05);
-      border-color: rgba(240, 65, 65, 0.1);
-    }
-
-    .recommendation-item.success {
-      border-left-color: #10dc60;
-      background: rgba(16, 220, 96, 0.05);
-      border-color: rgba(16, 220, 96, 0.1);
-    }
-
-    .recommendation-icon {
-      font-size: 1.5rem;
-      min-width: 40px;
-      text-align: center;
-    }
-
-    .recommendation-content h4 {
-      color: var(--ergofit-primary) !important;
-      margin: 0 0 var(--ergofit-spacing-xs) 0;
-      font-size: 1rem;
-    }
-
-    .recommendation-content p {
-      color: #666 !important;
-      margin: 0;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    .history-timeline {
-      display: flex;
-      flex-direction: column;
-      gap: var(--ergofit-spacing-md);
-    }
-
-    .timeline-item {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--ergofit-spacing-md);
-      padding: var(--ergofit-spacing-md);
-      background: var(--ergofit-card-background-alt);
-      border: 1px solid rgba(108, 99, 255, 0.1);
-      border-radius: var(--ergofit-card-radius-sm);
-    }
-
-    .timeline-time {
-      color: #666 !important;
-      font-size: 0.9rem;
-      font-weight: 500;
-      min-width: 50px;
-    }
-
-    .timeline-content {
-      flex: 1;
-    }
-
-    .timeline-scores {
-      display: flex;
-      gap: var(--ergofit-spacing-xs);
-      margin-bottom: var(--ergofit-spacing-xs);
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
       flex-wrap: wrap;
     }
 
-    .score-badge {
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: white !important;
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
     }
 
-    .score-badge.good {
-      background: #10dc60;
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
     }
 
-    .score-badge.fair {
-      background: #ffce00;
+    .legend-color.excellent {
+      background: var(--success-color);
     }
 
-    .score-badge.poor {
-      background: #f04141;
+    .legend-color.good {
+      background: #22c55e;
     }
 
-    .timeline-content p {
-      color: #666 !important;
+    .legend-color.fair {
+      background: var(--warning-color);
+    }
+
+    .legend-color.poor {
+      background: var(--danger-color);
+    }
+
+    /* ===== DETAILED METRICS ===== */
+    .detailed-metrics {
+      margin-bottom: 24px;
+    }
+
+    .metrics-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .metrics-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
       margin: 0;
-      font-size: 0.9rem;
+    }
+
+    .metrics-refresh ion-button {
+      --color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .metric-card {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .metric-card.excellent {
+      border-left: 4px solid var(--success-color);
+      background: rgba(16, 185, 129, 0.02);
+    }
+
+    .metric-card.good {
+      border-left: 4px solid #22c55e;
+      background: rgba(34, 197, 94, 0.02);
+    }
+
+    .metric-card.fair {
+      border-left: 4px solid var(--warning-color);
+      background: rgba(245, 158, 11, 0.02);
+    }
+
+    .metric-card.poor {
+      border-left: 4px solid var(--danger-color);
+      background: rgba(239, 68, 68, 0.02);
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .metric-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--background-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+      font-size: 18px;
+    }
+
+    .metric-info {
+      flex: 1;
+    }
+
+    .metric-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px 0;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .metric-unit {
+      font-size: 14px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .metric-status {
+      align-self: flex-start;
+    }
+
+    .status-chip {
+      --border-radius: var(--radius-md);
+      font-size: 11px;
+      font-weight: 600;
+      height: 24px;
+    }
+
+    .metric-progress {
+      margin-bottom: 16px;
+    }
+
+    .metric-progress ion-progress-bar {
+      height: 6px;
+      --progress-background: var(--background-tertiary);
+    }
+
+    .metric-recommendation {
+      padding: 12px;
+      background: var(--background-secondary);
+      border-radius: var(--radius-md);
+    }
+
+    .metric-recommendation p {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* ===== ACTIVITY FEED ===== */
+    .activity-feed {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .feed-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .feed-controls ion-button {
+      --color: var(--text-secondary);
+      font-size: 12px;
+      height: 32px;
+    }
+
+    .feed-content {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-time {
+      font-size: 12px;
+      color: var(--text-light);
+      font-family: monospace;
+      min-width: 60px;
+      padding-top: 2px;
+    }
+
+    .activity-content {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .activity-icon.info {
+      background: var(--info-color);
+    }
+
+    .activity-icon.warning {
+      background: var(--warning-color);
+    }
+
+    .activity-icon.success {
+      background: var(--success-color);
+    }
+
+    .activity-icon.danger {
+      background: var(--danger-color);
+    }
+
+    .activity-info {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 4px 0;
+    }
+
+    .activity-description {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .empty-feed {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+
+    .empty-feed ion-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    /* ===== QUICK STATS ===== */
+    .quick-stats {
+      background: var(--background-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stats-header {
+      margin-bottom: 24px;
+    }
+
+    .stats-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      background: var(--background-secondary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: rgba(37, 99, 235, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-color);
+      font-size: 18px;
+    }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 4px 0;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ===== RESPONSIVE DESIGN ===== */
+    @media (max-width: 768px) {
+      .monitoring-container {
+        padding: 16px;
+      }
+
+      .header-content {
+        padding: 24px 20px;
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+      }
+
+      .page-title {
+        font-size: 24px;
+      }
+
+      .control-panel {
+        padding: 24px 20px;
+      }
+
+      .control-actions {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .setting-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+      }
+
+      .setting-info {
+        margin-right: 0;
+        text-align: center;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .body-legend {
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 12px;
+      }
+
+      .body-legend {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
     }
   `]
 })
-export class MonitoringComponent implements OnInit, OnDestroy {
-  // Monitoring Data Properties
-  neckScore: number = 7;
-  backScore: number = 6;
-  shoulderScore: number = 8;
-  hipScore: number = 7;
-  postureChipColor: string = 'success';
-  postureIcon: string = 'checkmark-circle-outline';
-  postureStatus: string = 'Baik';
+export class MonitoringComponent implements OnInit, OnDestroy, AfterViewInit {
+  // Monitoring State
+  isMonitoring: boolean = false;
+  sessionTime: number = 0;
+  sensitivity: number = 7;
+  realTimeAlerts: boolean = true;
 
-  // Data Update Control
+  // Posture Scores
+  neckScore: number = 7;
+  shoulderScore: number = 8;
+  backScore: number = 6;
+  hipScore: number = 7;
+
+  // Statistics
+  alertCount: number = 3;
+  goodPostureTime: number = 72;
+  improvementTrend: number = 8;
+
+  // Activity Feed
+  activityFeed: any[] = [];
+
+  // Intervals
   private dataInterval: any;
-  updateFrequency: number = 3000;
+  private sessionInterval: any;
 
   constructor() {
     addIcons({
       'checkmark-circle-outline': checkmarkCircleOutline,
       'alert-circle-outline': alertCircleOutline,
-      'warning-outline': warningOutline
+      'warning-outline': warningOutline,
+      'play-outline': playOutline,
+      'pause-outline': pauseOutline,
+      'stop-outline': stopOutline,
+      'settings-outline': settingsOutline,
+      'eye-outline': eyeOutline,
+      'camera-outline': cameraOutline,
+      'timer-outline': timerOutline,
+      'stats-chart-outline': statsChartOutline,
+      'notifications-outline': notificationsOutline,
+      'body-outline': bodyOutline,
+      'shield-checkmark-outline': shieldCheckmarkOutline,
+      'pulse-outline': pulseOutline,
+      'refresh-outline': refreshOutline,
+      'information-circle-outline': informationCircleOutline
     });
   }
 
   ngOnInit() {
-    this.startDataSimulation();
+    this.initializeActivityFeed();
+  }
+
+  ngAfterViewInit() {
+    // Initialize any chart visualizations if needed
   }
 
   ngOnDestroy() {
-    this.stopDataSimulation();
+    this.stopMonitoring();
   }
 
-  onPostureCheck() {
-    console.log('Starting posture check...');
-    setTimeout(() => {
-      this.updateAllScores();
-      this.updatePostureStatus();
-    }, 2000);
+  toggleMonitoring() {
+    if (this.isMonitoring) {
+      this.pauseMonitoring();
+    } else {
+      this.startMonitoring();
+    }
   }
 
-  // SVG Body Part Color Methods
+  startMonitoring() {
+    this.isMonitoring = true;
+    this.addActivity('info', 'Monitoring Started', 'Real-time posture monitoring is now active');
+
+    // Start data simulation
+    this.dataInterval = setInterval(() => {
+      this.updatePostureData();
+    }, 3000);
+
+    // Start session timer
+    this.sessionInterval = setInterval(() => {
+      this.sessionTime++;
+    }, 1000);
+  }
+
+  pauseMonitoring() {
+    this.isMonitoring = false;
+    this.addActivity('warning', 'Monitoring Paused', 'Monitoring session has been paused');
+
+    if (this.dataInterval) {
+      clearInterval(this.dataInterval);
+      this.dataInterval = null;
+    }
+
+    if (this.sessionInterval) {
+      clearInterval(this.sessionInterval);
+      this.sessionInterval = null;
+    }
+  }
+
+  stopMonitoring() {
+    this.isMonitoring = false;
+    this.sessionTime = 0;
+    this.addActivity('info', 'Monitoring Stopped', 'Session ended and data saved');
+
+    if (this.dataInterval) {
+      clearInterval(this.dataInterval);
+      this.dataInterval = null;
+    }
+
+    if (this.sessionInterval) {
+      clearInterval(this.sessionInterval);
+      this.sessionInterval = null;
+    }
+  }
+
+  openSettings() {
+    console.log('Opening monitoring settings...');
+  }
+
+  toggleBodyView() {
+    console.log('Toggling body view...');
+  }
+
+  capturePosture() {
+    this.addActivity('success', 'Posture Captured', 'Current posture snapshot saved for analysis');
+  }
+
+  refreshMetrics() {
+    this.updatePostureData();
+    this.addActivity('info', 'Metrics Refreshed', 'Posture analysis data has been updated');
+  }
+
+  clearFeed() {
+    this.activityFeed = [];
+  }
+
+  // Data and Status Methods
+  private updatePostureData() {
+    const oldNeck = this.neckScore;
+    const oldShoulder = this.shoulderScore;
+    const oldBack = this.backScore;
+    const oldHip = this.hipScore;
+
+    // Simulate gradual changes
+    this.neckScore = Math.max(1, Math.min(10, this.neckScore + Math.floor(Math.random() * 3 - 1)));
+    this.shoulderScore = Math.max(1, Math.min(10, this.shoulderScore + Math.floor(Math.random() * 3 - 1)));
+    this.backScore = Math.max(1, Math.min(10, this.backScore + Math.floor(Math.random() * 3 - 1)));
+    this.hipScore = Math.max(1, Math.min(10, this.hipScore + Math.floor(Math.random() * 3 - 1)));
+
+    // Check for significant changes
+    if (Math.abs(this.neckScore - oldNeck) >= 2) {
+      const improvement = this.neckScore > oldNeck;
+      this.addActivity(
+        improvement ? 'success' : 'warning',
+        `Neck Position ${improvement ? 'Improved' : 'Declined'}`,
+        `Score changed from ${oldNeck} to ${this.neckScore}`
+      );
+    }
+
+    // Check for alerts
+    if (this.realTimeAlerts && this.getOverallScore() < 60) {
+      this.alertCount++;
+      this.addActivity('danger', 'Poor Posture Alert', 'Please adjust your posture immediately');
+    }
+  }
+
+  private initializeActivityFeed() {
+    this.activityFeed = [
+      {
+        id: 1,
+        timestamp: Date.now() - 300000,
+        type: 'info',
+        title: 'Monitoring Initialized',
+        description: 'System ready for posture tracking'
+      }
+    ];
+  }
+
+  private addActivity(type: string, title: string, description: string) {
+    const activity = {
+      id: Date.now(),
+      timestamp: Date.now(),
+      type,
+      title,
+      description
+    };
+
+    this.activityFeed.unshift(activity);
+
+    // Keep only last 10 activities
+    if (this.activityFeed.length > 10) {
+      this.activityFeed = this.activityFeed.slice(0, 10);
+    }
+  }
+
+  // Body Part Colors
   getBodyPartColor(part: string): string {
     const scores: { [key: string]: number } = {
       'head': 8,
@@ -591,91 +1411,117 @@ export class MonitoringComponent implements OnInit, OnDestroy {
 
     const score = scores[part] || 7;
 
-    if (score >= 8) return '#10dc60'; // Green - Good
-    if (score >= 6) return '#ffce00'; // Yellow - Fair
-    return '#f04141'; // Red - Poor
+    if (score >= 9) return '#10b981'; // Excellent - Green
+    if (score >= 7) return '#22c55e'; // Good - Light Green
+    if (score >= 5) return '#f59e0b'; // Fair - Yellow
+    return '#ef4444'; // Poor - Red
   }
 
-  // Metric Color Methods
+  // Overall Status Methods
+  getOverallScore(): number {
+    return Math.round((this.neckScore + this.shoulderScore + this.backScore + this.hipScore) * 2.5);
+  }
+
+  getOverallStatusClass(): string {
+    const score = this.getOverallScore();
+    if (score >= 90) return 'excellent';
+    if (score >= 70) return 'good';
+    if (score >= 50) return 'fair';
+    return 'poor';
+  }
+
+  getOverallStatusText(): string {
+    const score = this.getOverallScore();
+    if (score >= 90) return 'Excellent';
+    if (score >= 70) return 'Good';
+    if (score >= 50) return 'Fair';
+    return 'Poor';
+  }
+
+  getOverallStatusIcon(): string {
+    const score = this.getOverallScore();
+    if (score >= 70) return 'checkmark-circle-outline';
+    if (score >= 50) return 'alert-circle-outline';
+    return 'warning-outline';
+  }
+
+  getOverallStatusColor(): string {
+    const score = this.getOverallScore();
+    if (score >= 90) return 'success';
+    if (score >= 70) return 'success';
+    if (score >= 50) return 'warning';
+    return 'danger';
+  }
+
+  // Metric Status Methods
+  getMetricStatusClass(score: number): string {
+    if (score >= 9) return 'excellent';
+    if (score >= 7) return 'good';
+    if (score >= 5) return 'fair';
+    return 'poor';
+  }
+
   getMetricColor(score: number): string {
-    if (score >= 8) return '#10dc60';
-    if (score >= 6) return '#ffce00';
-    return '#f04141';
+    if (score >= 8) return 'success';
+    if (score >= 6) return 'warning';
+    return 'danger';
   }
 
-  getNeckStatus(): string {
-    if (this.neckScore >= 8) return 'Sangat Baik';
-    if (this.neckScore >= 6) return 'Baik';
-    return 'Perlu Perbaikan';
+  getStatusText(score: number): string {
+    if (score >= 8) return 'Excellent';
+    if (score >= 6) return 'Good';
+    if (score >= 4) return 'Fair';
+    return 'Poor';
   }
 
-  getBackStatus(): string {
-    if (this.backScore >= 8) return 'Sangat Baik';
-    if (this.backScore >= 6) return 'Baik';
-    return 'Perlu Perbaikan';
+  // Recommendation Methods
+  getNeckRecommendation(): string {
+    if (this.neckScore >= 8) return 'Excellent neck position! Keep it up.';
+    if (this.neckScore >= 6) return 'Good posture. Try to keep your head more aligned.';
+    return 'Adjust monitor height and keep head in neutral position.';
   }
 
-  getShoulderStatus(): string {
-    if (this.shoulderScore >= 8) return 'Sangat Baik';
-    if (this.shoulderScore >= 6) return 'Baik';
-    return 'Perlu Perbaikan';
+  getShoulderRecommendation(): string {
+    if (this.shoulderScore >= 8) return 'Perfect shoulder alignment!';
+    if (this.shoulderScore >= 6) return 'Good posture. Relax shoulders slightly.';
+    return 'Lower and relax your shoulders to reduce tension.';
   }
 
-  getHipStatus(): string {
-    if (this.hipScore >= 8) return 'Sangat Baik';
-    if (this.hipScore >= 6) return 'Baik';
-    return 'Perlu Perbaikan';
+  getBackRecommendation(): string {
+    if (this.backScore >= 8) return 'Excellent spinal alignment!';
+    if (this.backScore >= 6) return 'Good posture. Ensure lower back support.';
+    return 'Sit back in chair and use lumbar support if available.';
   }
 
-  getAverageScore(): number {
-    return (this.neckScore + this.backScore + this.shoulderScore + this.hipScore) / 4;
+  getHipRecommendation(): string {
+    if (this.hipScore >= 8) return 'Perfect hip positioning!';
+    if (this.hipScore >= 6) return 'Good alignment. Keep feet flat on floor.';
+    return 'Adjust seat height and keep hips at 90-degree angle.';
   }
 
-  private startDataSimulation() {
-    this.dataInterval = setInterval(() => {
-      this.updateData();
-    }, this.updateFrequency);
-  }
-
-  private stopDataSimulation() {
-    if (this.dataInterval) {
-      clearInterval(this.dataInterval);
-      this.dataInterval = null;
+  // Activity Feed Methods
+  getActivityIcon(type: string): string {
+    switch (type) {
+      case 'success': return 'checkmark-circle-outline';
+      case 'warning': return 'alert-circle-outline';
+      case 'danger': return 'warning-outline';
+      default: return 'information-circle-outline';
     }
   }
 
-  private updateData() {
-    // Update Body Part Scores with gradual changes
-    this.neckScore = Math.max(1, Math.min(10, this.neckScore + Math.floor(Math.random() * 3 - 1)));
-    this.backScore = Math.max(1, Math.min(10, this.backScore + Math.floor(Math.random() * 3 - 1)));
-    this.shoulderScore = Math.max(1, Math.min(10, this.shoulderScore + Math.floor(Math.random() * 3 - 1)));
-    this.hipScore = Math.max(1, Math.min(10, this.hipScore + Math.floor(Math.random() * 3 - 1)));
-
-    this.updatePostureStatus();
+  trackByActivity(index: number, item: any): any {
+    return item.id;
   }
 
-  private updateAllScores() {
-    this.neckScore = Math.floor(Math.random() * 10) + 1;
-    this.backScore = Math.floor(Math.random() * 10) + 1;
-    this.shoulderScore = Math.floor(Math.random() * 10) + 1;
-    this.hipScore = Math.floor(Math.random() * 10) + 1;
-  }
+  // Utility Methods
+  formatTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
 
-  private updatePostureStatus() {
-    const averageScore = (this.neckScore + this.backScore + this.shoulderScore + this.hipScore) / 4;
-
-    if (averageScore >= 8) {
-      this.postureStatus = 'Sangat Baik';
-      this.postureChipColor = 'success';
-      this.postureIcon = 'checkmark-circle-outline';
-    } else if (averageScore >= 6) {
-      this.postureStatus = 'Baik';
-      this.postureChipColor = 'warning';
-      this.postureIcon = 'alert-circle-outline';
-    } else {
-      this.postureStatus = 'Perlu Perbaikan';
-      this.postureChipColor = 'danger';
-      this.postureIcon = 'warning-outline';
+    if (hours > 0) {
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
+    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 }
