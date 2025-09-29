@@ -4,9 +4,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonButton,
   IonIcon,
   IonSegment,
@@ -43,9 +40,6 @@ import {
     CommonModule,
     FormsModule,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonButton,
     IonIcon,
     IonSegment,
@@ -61,18 +55,21 @@ import {
     IonChip
   ],
   template: `
-    <ion-header class="header">
-      <ion-toolbar class="header-toolbar">
-        <ion-title class="header-title">
-          <div class="title-content">
-            <ion-icon name="heart-outline" class="title-icon"></ion-icon>
-            <span>Rekomendasi Ergonomis</span>
-          </div>
-        </ion-title>
-      </ion-toolbar>
-    </ion-header>
-
     <ion-content class="content" [fullscreen]="true">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="header-content">
+          <div class="title-section">
+            <div class="title-icon">
+              <ion-icon name="heart-outline"></ion-icon>
+            </div>
+            <div class="title-info">
+              <h1>Rekomendasi Ergonomis</h1>
+              <p>Panduan dan saran untuk meningkatkan postur dan kesehatan Anda</p>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Category Filter -->
       <div class="filter-section">
         <ion-segment [(ngModel)]="selectedCategory" class="category-segment">
@@ -293,31 +290,115 @@ import {
       --spacing-xl: 32px;
     }
 
-    /* Header Styles */
-    .header {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
-      color: white;
+    /* Page Header Styles */
+    .page-header {
+      background: var(--surface-color);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-lg);
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(37, 99, 235, 0.1);
     }
 
-    .header-toolbar {
-      --background: transparent;
-      --color: white;
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .title-content {
+    .title-section {
       display: flex;
       align-items: center;
-      gap: var(--spacing-sm);
+      gap: var(--spacing-lg);
     }
 
     .title-icon {
-      font-size: 1.5rem;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      box-shadow: var(--card-shadow);
+    }
+
+    .title-info h1 {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--dark-color);
+      margin: 0 0 var(--spacing-sm) 0;
+      letter-spacing: -0.025em;
+    }
+
+    .title-info p {
+      font-size: 1.125rem;
+      color: var(--primary-color);
+      margin: 0;
+      opacity: 0.8;
     }
 
     /* Content Layout */
     .content {
       --background: var(--background-color);
       padding: var(--spacing-md);
+    }
+
+    /* Mobile Responsive for Page Header */
+    @media (max-width: 768px) {
+      .page-header {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-md) var(--spacing-md) var(--spacing-lg);
+        border-radius: var(--border-radius);
+      }
+
+      .title-section {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-md);
+      }
+
+      .title-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 1.75rem;
+      }
+
+      .title-info h1 {
+        font-size: 1.875rem;
+        text-align: center;
+      }
+
+      .title-info p {
+        font-size: 1rem;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-header {
+        padding: var(--spacing-md);
+        margin: var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
+      }
+
+      .title-section {
+        gap: var(--spacing-sm);
+      }
+
+      .title-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+      }
+
+      .title-info h1 {
+        font-size: 1.5rem;
+      }
+
+      .title-info p {
+        font-size: 0.95rem;
+      }
     }
 
     /* Filter Section */
