@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SettingsService, AppSettings } from '../../services/settings.service';
+import { Subscription } from 'rxjs';
 import {
   IonContent,
   IonList,
@@ -186,77 +188,6 @@ import {
         </ion-card-content>
       </ion-card>
 
-      <!-- Profil Pengguna -->
-      <ion-card class="settings-card">
-        <ion-card-header>
-          <div class="card-header-content">
-            <div class="card-icon profile-icon">
-              <ion-icon name="person-outline"></ion-icon>
-            </div>
-            <ion-card-title>Profil Pengguna</ion-card-title>
-          </div>
-        </ion-card-header>
-        <ion-card-content>
-          <div class="profile-form">
-            <div class="form-group">
-              <label class="form-label">Nama Lengkap</label>
-              <ion-input
-                [(ngModel)]="userProfile.name"
-                placeholder="Masukkan nama lengkap Anda"
-                class="modern-input">
-              </ion-input>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Email</label>
-              <ion-input
-                type="email"
-                [(ngModel)]="userProfile.email"
-                placeholder="nama@email.com"
-                class="modern-input">
-              </ion-input>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Tinggi Badan (cm)</label>
-                <ion-input
-                  type="number"
-                  [(ngModel)]="userProfile.height"
-                  placeholder="170"
-                  class="modern-input">
-                </ion-input>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Berat Badan (kg)</label>
-                <ion-input
-                  type="number"
-                  [(ngModel)]="userProfile.weight"
-                  placeholder="70"
-                  class="modern-input">
-                </ion-input>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Jenis Pekerjaan</label>
-              <ion-select [(ngModel)]="userProfile.workType" placeholder="Pilih jenis pekerjaan" class="modern-select">
-                <ion-select-option value="office">Pekerja Kantoran</ion-select-option>
-                <ion-select-option value="remote">Pekerja Remote</ion-select-option>
-                <ion-select-option value="hybrid">Hybrid</ion-select-option>
-                <ion-select-option value="student">Mahasiswa</ion-select-option>
-              </ion-select>
-            </div>
-          </div>
-
-          <div class="save-button-container">
-            <ion-button expand="block" fill="solid" (click)="saveSettings()" class="save-button">
-              Simpan Pengaturan
-            </ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
 
       <!-- Data & Privacy -->
       <ion-card class="settings-card">
@@ -499,9 +430,6 @@ import {
       background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
     }
 
-    .profile-icon {
-      background: linear-gradient(135deg, var(--secondary-color), #10b981);
-    }
 
     .privacy-icon {
       background: linear-gradient(135deg, var(--accent-color), #8b5cf6);
@@ -619,30 +547,6 @@ import {
       --handle-background-checked: white;
     }
 
-    /* Profile Form */
-    .profile-form {
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-lg);
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-label {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--gray-700);
-      margin-bottom: var(--spacing-sm);
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--spacing-md);
-    }
 
     /* Action Items */
     .action-item {
@@ -840,9 +744,6 @@ import {
         font-size: 1.875rem;
       }
 
-      .form-row {
-        grid-template-columns: 1fr;
-      }
 
       .stats-grid {
         grid-template-columns: 1fr;
@@ -893,7 +794,7 @@ import {
     }
   `]
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
   // Settings Properties
   notificationsEnabled: boolean = true;
   soundEnabled: boolean = true;
@@ -904,20 +805,16 @@ export class SettingsComponent implements OnInit {
   cloudSyncEnabled: boolean = false;
   analyticsEnabled: boolean = true;
 
-  // User Profile
-  userProfile = {
-    name: '',
-    email: '',
-    height: 0,
-    weight: 0,
-    workType: 'office'
-  };
+  // Timer for notifications
+  private notificationTimer: any = null;
+  private subscriptions = new Subscription();
+
 
   // App Stats
   totalSessions: number = 42;
   daysUsed: number = 14;
 
-  constructor() {
+  constructor(private settingsService: SettingsService) {
     addIcons({
       'settings-outline': settingsOutline,
       'person-outline': personOutline,
@@ -938,8 +835,93 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.subscriptions.add(
+      this.settingsService.settings$.subscribe(settings => {
+        this.updateLocalSettingsFromService(settings);
+      })
+    );
     this.loadUserSettings();
+    this.loadAppStats();
   }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+    // Clean up notification timer
+    if (this.notificationTimer) {
+      clearInterval(this.notificationTimer);
+      this.notificationTimer = null;
+    }
+  }
+
+  private updateLocalSettingsFromService(settings: AppSettings) {
+    this.notificationsEnabled = settings.notificationsEnabled;
+    this.soundEnabled = settings.soundEnabled;
+    this.darkModeEnabled = settings.darkModeEnabled;
+    this.selectedLanguage = settings.selectedLanguage;
+    this.reminderInterval = settings.reminderInterval;
+    this.sensitivity = settings.sensitivity;
+    this.cloudSyncEnabled = settings.cloudSyncEnabled;
+    this.analyticsEnabled = settings.analyticsEnabled;
+  }
+
+  private loadAppStats() {
+    // Load app usage statistics from local storage or service
+    const savedStats = localStorage.getItem('ergofit-stats');
+    if (savedStats) {
+      const stats = JSON.parse(savedStats);
+      this.totalSessions = stats.totalSessions || 42;
+      this.daysUsed = stats.daysUsed || 14;
+    }
+  }
+
+  async onNotificationToggleChange(event: any) {
+    await this.settingsService.updateSettings({
+      notificationsEnabled: event.detail.checked
+    });
+  }
+
+  async onSoundToggleChange(event: any) {
+    await this.settingsService.updateSettings({
+      soundEnabled: event.detail.checked
+    });
+  }
+
+  async onDarkModeToggleChange(event: any) {
+    await this.settingsService.updateSettings({
+      darkModeEnabled: event.detail.checked
+    });
+  }
+
+  async onLanguageChange(event: any) {
+    await this.settingsService.updateSettings({
+      selectedLanguage: event.detail.value
+    });
+  }
+
+  async onReminderIntervalChange(event: any) {
+    await this.settingsService.updateSettings({
+      reminderInterval: parseInt(event.detail.value)
+    });
+  }
+
+  async onSensitivityChange(event: any) {
+    await this.settingsService.updateSettings({
+      sensitivity: event.detail.value
+    });
+  }
+
+  async onCloudSyncToggleChange(event: any) {
+    await this.settingsService.updateSettings({
+      cloudSyncEnabled: event.detail.checked
+    });
+  }
+
+  async onAnalyticsToggleChange(event: any) {
+    await this.settingsService.updateSettings({
+      analyticsEnabled: event.detail.checked
+    });
+  }
+
 
 
   saveSettings() {
@@ -955,10 +937,8 @@ export class SettingsComponent implements OnInit {
     };
 
     localStorage.setItem('ergofit-settings', JSON.stringify(settings));
-    localStorage.setItem('ergofit-profile', JSON.stringify(this.userProfile));
 
     console.log('Settings saved:', settings);
-    console.log('Profile saved:', this.userProfile);
 
     // Show success message (you can implement toast notification here)
     alert('Pengaturan berhasil disimpan!');
@@ -978,66 +958,98 @@ export class SettingsComponent implements OnInit {
       this.cloudSyncEnabled = settings.cloudSyncEnabled ?? false;
       this.analyticsEnabled = settings.analyticsEnabled ?? true;
     }
+  }
 
-    // Load user profile
-    const savedProfile = localStorage.getItem('ergofit-profile');
-    if (savedProfile) {
-      this.userProfile = { ...this.userProfile, ...JSON.parse(savedProfile) };
+  async exportData() {
+    try {
+      const exportData = await this.settingsService.exportSettings();
+      const enhancedData = JSON.parse(exportData);
+      enhancedData.stats = {
+        totalSessions: this.totalSessions,
+        daysUsed: this.daysUsed
+      };
+
+      const dataStr = JSON.stringify(enhancedData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ergofit-data-export-${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      console.log('Data exported successfully');
+      alert('Data berhasil diekspor!');
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      alert('Gagal mengekspor data. Silakan coba lagi.');
     }
   }
 
-  exportData() {
-    const data = {
-      settings: {
-        notificationsEnabled: this.notificationsEnabled,
-        soundEnabled: this.soundEnabled,
-        darkModeEnabled: this.darkModeEnabled,
-        selectedLanguage: this.selectedLanguage,
-        reminderInterval: this.reminderInterval,
-        sensitivity: this.sensitivity
-      },
-      profile: this.userProfile,
-      exportDate: new Date().toISOString()
-    };
-
-    const dataStr = JSON.stringify(data, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'ergofit-data-export.json';
-    link.click();
-    URL.revokeObjectURL(url);
-
-    console.log('Data exported successfully');
-  }
-
-  clearData() {
+  async clearData() {
     const confirmed = confirm('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.');
     if (confirmed) {
-      localStorage.removeItem('ergofit-settings');
-      localStorage.removeItem('ergofit-profile');
+      const doubleConfirm = confirm('Ini akan menghapus SEMUA pengaturan dan data. Ketik "HAPUS" untuk konfirmasi.');
+      if (doubleConfirm) {
+        try {
+          await this.settingsService.clearAllSettings();
 
-      // Reset to default values
-      this.notificationsEnabled = true;
-      this.soundEnabled = true;
-      this.darkModeEnabled = false;
-      this.selectedLanguage = 'id';
-      this.reminderInterval = 30;
-      this.sensitivity = 7;
-      this.cloudSyncEnabled = false;
-      this.analyticsEnabled = true;
+          // Clear stats
+          localStorage.removeItem('ergofit-stats');
 
-      this.userProfile = {
-        name: '',
-        email: '',
-        height: 0,
-        weight: 0,
-        workType: 'office'
-      };
+          // Reset stats
+          this.totalSessions = 0;
+          this.daysUsed = 0;
 
-      console.log('All data cleared');
-      alert('Semua data berhasil dihapus!');
+          console.log('All data cleared');
+          alert('Semua data berhasil dihapus!');
+        } catch (error) {
+          console.error('Error clearing data:', error);
+          alert('Gagal menghapus data. Silakan coba lagi.');
+        }
+      }
+    }
+  }
+
+  async importData() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        try {
+          const text = await file.text();
+          await this.settingsService.importSettings(text);
+
+          // Also import stats if available
+          const importedData = JSON.parse(text);
+          if (importedData.stats) {
+            this.totalSessions = importedData.stats.totalSessions || 0;
+            this.daysUsed = importedData.stats.daysUsed || 0;
+            localStorage.setItem('ergofit-stats', JSON.stringify(importedData.stats));
+          }
+
+          alert('Data berhasil diimpor!');
+        } catch (error) {
+          console.error('Error importing data:', error);
+          alert('Gagal mengimpor data. Periksa format file.');
+        }
+      }
+    };
+    input.click();
+  }
+
+  async resetToDefaults() {
+    const confirmed = confirm('Apakah Anda yakin ingin mengembalikan semua pengaturan ke default?');
+    if (confirmed) {
+      try {
+        await this.settingsService.resetToDefaults();
+        alert('Pengaturan berhasil direset ke default!');
+      } catch (error) {
+        console.error('Error resetting to defaults:', error);
+        alert('Gagal mereset pengaturan. Silakan coba lagi.');
+      }
     }
   }
 }

@@ -75,420 +75,1422 @@ import {
     IonCol
   ],
   template: `
-    <ion-content class="content" [fullscreen]="true">
-      <!-- Welcome Section -->
-      <div class="welcome-section">
-        <div class="dashboard-header">
-          <div class="brand-section">
-            <div class="brand-logo">
-              <img src="assets/logo/logo ergofit.jpg" alt="ErgoFit Logo" class="logo-image">
+    <!-- Aurora Background -->
+    <div class="aurora-mesh-bg">
+      <div class="aurora-orb aurora-orb-1"></div>
+      <div class="aurora-orb aurora-orb-2"></div>
+      <div class="aurora-orb aurora-orb-3"></div>
+      <div class="aurora-particles">
+        <div class="aurora-particle" *ngFor="let particle of particles" 
+             [style.animation-delay]="particle.delay + 's'"
+             [style.animation-duration]="particle.duration + 's'"></div>
+      </div>
+    </div>
+
+    <ion-content class="aurora-content" [fullscreen]="true" [scrollEvents]="true">
+      <!-- Aurora Header -->  
+      <div class="aurora-header">
+        <div class="aurora-header-glow"></div>
+        <div class="aurora-header-content">
+          <div class="aurora-brand-section">
+            <div class="aurora-logo-container">
+              <div class="aurora-logo-rings">
+                <div class="aurora-ring aurora-ring-1"></div>
+                <div class="aurora-ring aurora-ring-2"></div>
+                <div class="aurora-ring aurora-ring-3"></div>
+              </div>
+              <img src="assets/logo/logo ergofit.jpg" alt="ErgoFit Logo" class="aurora-logo">
             </div>
-            <div class="brand-info">
-              <h1 class="brand-title">ErgoFit</h1>
-              <p class="brand-subtitle">Ergonomic Monitoring Dashboard</p>
+            <div class="aurora-brand-info">
+              <h1 class="aurora-brand-title">ErgoFit</h1>
+              <p class="aurora-brand-subtitle">AI-Powered Posture Intelligence</p>
             </div>
           </div>
-          <div class="status-section">
-            <div class="current-time">
-              <ion-icon name="time-outline"></ion-icon>
-              <span>{{ getCurrentTime() }}</span>
+
+          <div class="aurora-status-section">
+            <div class="aurora-status-card aurora-time-card">
+              <div class="aurora-status-icon">
+                <ion-icon name="time-outline"></ion-icon>
+              </div>
+              <div class="aurora-status-content">
+                <span class="aurora-status-value">{{ getCurrentTime() }}</span>
+                <span class="aurora-status-label">Waktu Saat Ini</span>
+              </div>
             </div>
-            <ion-badge [color]="getStatusColor()" class="status-badge">
-              <ion-icon name="heart-outline"></ion-icon>
-              {{ currentStatusText }}
-            </ion-badge>
+            <div class="aurora-status-card aurora-health-card" [class]="'aurora-' + getStatusColor()">
+              <div class="aurora-status-icon">
+                <ion-icon name="heart-outline"></ion-icon>
+              </div>
+              <div class="aurora-status-content">
+                <span class="aurora-status-value">{{ currentStatusText }}</span>
+                <span class="aurora-status-label">Status Kesehatan</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="welcome-greeting">
-          <h2>Selamat {{ getGreeting() }}, {{ userName }}!</h2>
-          <p>Berikut adalah ringkasan aktivitas ergonomis Anda hari ini</p>
+
+        <div class="aurora-welcome-section">
+          <h2 class="aurora-welcome-title">Selamat {{ getGreeting() }}, {{ userName }}!</h2>
+          <p class="aurora-welcome-subtitle">Mari tingkatkan postur dan kesehatan Anda hari ini</p>
+          <div class="aurora-welcome-glow"></div>
         </div>
       </div>
 
-      <!-- Key Metrics Overview -->
-      <div class="metrics-overview">
-        <h2 class="section-title">
-          <ion-icon name="analytics-outline"></ion-icon>
-          Metrics Utama
-        </h2>
+      <!-- Modern Metrics Grid -->
+      <div class="metrics-section">
+        <div class="section-header">
+          <h2 class="section-title">Dashboard Metrics</h2>
+          <p class="section-subtitle">Real-time insights into your posture and wellness</p>
+        </div>
 
-        <ion-grid>
-          <ion-row>
-            <ion-col size="12" size-md="6" size-lg="3">
-              <ion-card class="metric-card primary-card">
-                <ion-card-content>
-                  <div class="metric-header">
-                    <div class="metric-icon primary-icon">
-                      <ion-icon name="body-outline"></ion-icon>
-                    </div>
-                    <div class="metric-trend" [class.positive]="postureScore >= 80">
-                      <ion-icon name="trending-up-outline"></ion-icon>
-                      <span>+{{ trendValue }}%</span>
-                    </div>
-                  </div>
-                  <div class="metric-value">
-                    <span class="value">{{ postureScore }}</span>
-                    <span class="unit">%</span>
-                  </div>
-                  <div class="metric-label">Skor Postur</div>
-                  <ion-progress-bar [value]="postureScore / 100" class="metric-progress"></ion-progress-bar>
-                  <div class="metric-status">{{ getPostureStatus() }}</div>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
+        <div class="metrics-grid">
+          <div class="metric-card posture-card">
+            <div class="metric-header">
+              <div class="metric-icon posture-icon">
+                <ion-icon name="body-outline"></ion-icon>
+              </div>
+              <div class="metric-trend positive">
+                <ion-icon name="trending-up-outline"></ion-icon>
+                <span>+{{ trendValue }}%</span>
+              </div>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value">
+                <span class="value">{{ postureScore }}</span>
+                <span class="unit">%</span>
+              </div>
+              <div class="metric-label">Skor Postur</div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill posture-progress" [style.width.%]="postureScore"></div>
+                </div>
+                <span class="progress-text">{{ getPostureStatus() }}</span>
+              </div>
+            </div>
+          </div>
 
-            <ion-col size="12" size-md="6" size-lg="3">
-              <ion-card class="metric-card secondary-card">
-                <ion-card-content>
-                  <div class="metric-header">
-                    <div class="metric-icon secondary-icon">
-                      <ion-icon name="timer-outline"></ion-icon>
-                    </div>
-                  </div>
-                  <div class="metric-value">
-                    <span class="value">{{ activeHours }}</span>
-                    <span class="unit">jam</span>
-                  </div>
-                  <div class="metric-label">Waktu Aktif</div>
-                  <ion-progress-bar [value]="timeProgressPercent / 100" class="metric-progress secondary"></ion-progress-bar>
-                  <div class="metric-status">{{ timeProgressPercent }}% dari target 8 jam</div>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
+          <div class="metric-card time-card">
+            <div class="metric-header">
+              <div class="metric-icon time-icon">
+                <ion-icon name="timer-outline"></ion-icon>
+              </div>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value">
+                <span class="value">{{ activeHours }}</span>
+                <span class="unit">jam</span>
+              </div>
+              <div class="metric-label">Waktu Aktif</div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill time-progress" [style.width.%]="timeProgressPercent"></div>
+                </div>
+                <span class="progress-text">{{ timeProgressPercent }}% dari target</span>
+              </div>
+            </div>
+          </div>
 
-            <ion-col size="12" size-md="6" size-lg="3">
-              <ion-card class="metric-card tertiary-card">
-                <ion-card-content>
-                  <div class="metric-header">
-                    <div class="metric-icon tertiary-icon">
-                      <ion-icon name="cafe-outline"></ion-icon>
-                    </div>
-                  </div>
-                  <div class="metric-value">
-                    <span class="value">{{ breaksToday }}</span>
-                    <span class="unit">/8</span>
-                  </div>
-                  <div class="metric-label">Break Diambil</div>
-                  <div class="break-indicators">
-                    <div *ngFor="let i of breakNumbers"
-                         class="break-dot"
-                         [class.completed]="i <= breaksToday"
-                         [class.current]="i === breaksToday + 1">
-                    </div>
-                  </div>
-                  <div class="metric-status">{{ getBreakStatus() }}</div>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
+          <div class="metric-card break-card">
+            <div class="metric-header">
+              <div class="metric-icon break-icon">
+                <ion-icon name="cafe-outline"></ion-icon>
+              </div>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value">
+                <span class="value">{{ breaksToday }}</span>
+                <span class="unit">/8</span>
+              </div>
+              <div class="metric-label">Break Diambil</div>
+              <div class="break-visualization">
+                <div *ngFor="let i of breakNumbers"
+                     class="break-dot"
+                     [class.completed]="i <= breaksToday"
+                     [class.current]="i === breaksToday + 1">
+                </div>
+              </div>
+              <span class="metric-status">{{ getBreakStatus() }}</span>
+            </div>
+          </div>
 
-            <ion-col size="12" size-md="6" size-lg="3">
-              <ion-card class="metric-card success-card">
-                <ion-card-content>
-                  <div class="metric-header">
-                    <div class="metric-icon success-icon">
-                      <ion-icon name="star-outline"></ion-icon>
-                    </div>
-                  </div>
-                  <div class="metric-value">
-                    <span class="value">{{ streakDays }}</span>
-                    <span class="unit">hari</span>
-                  </div>
-                  <div class="metric-label">Streak Terbaik</div>
-                  <div class="streak-visualization">
-                    <div *ngFor="let day of recentDays"
-                         class="streak-day"
-                         [class.completed]="day.completed">
-                      <div class="day-dot"></div>
-                    </div>
-                  </div>
-                  <div class="metric-status">Konsistensi Excellent!</div>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+          <div class="metric-card streak-card">
+            <div class="metric-header">
+              <div class="metric-icon streak-icon">
+                <ion-icon name="star-outline"></ion-icon>
+              </div>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value">
+                <span class="value">{{ streakDays }}</span>
+                <span class="unit">hari</span>
+              </div>
+              <div class="metric-label">Streak Terbaik</div>
+              <div class="streak-visualization">
+                <div *ngFor="let day of recentDays"
+                     class="streak-day"
+                     [class.completed]="day.completed">
+                  <div class="day-dot"></div>
+                </div>
+              </div>
+              <span class="metric-status">Konsistensi Excellent!</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Alert Section -->
-      <div class="alert-section" *ngIf="currentAlerts.length > 0">
-        <h2 class="section-title">
-          <ion-icon name="warning-outline"></ion-icon>
-          Notifikasi & Alert
-        </h2>
+      <!-- Smart Alerts -->
+      <div class="alerts-section" *ngIf="currentAlerts.length > 0">
+        <div class="section-header">
+          <h2 class="section-title">Smart Alerts</h2>
+          <p class="section-subtitle">AI-powered recommendations for your wellness</p>
+        </div>
 
-        <div class="alerts-container">
-          <ion-card *ngFor="let alert of currentAlerts"
-                   class="alert-card"
-                   [class]="'alert-' + alert.type">
-            <ion-card-content>
-              <div class="alert-header">
+        <div class="alerts-grid">
+          <div *ngFor="let alert of currentAlerts"
+               class="alert-card modern-alert"
+               [class]="'alert-' + alert.type">
+            <div class="alert-content">
+              <div class="alert-icon-container">
                 <div class="alert-icon">
                   <ion-icon [name]="alert.icon"></ion-icon>
                 </div>
-                <div class="alert-content">
-                  <h4>{{ alert.title }}</h4>
-                  <p>{{ alert.message }}</p>
+                <div class="alert-priority" [class]="'priority-' + alert.type">
+                  {{ alert.priority }}
                 </div>
-                <ion-badge [color]="alert.type">{{ alert.priority }}</ion-badge>
               </div>
-              <div class="alert-actions" *ngIf="alert.actions">
-                <ion-button *ngFor="let action of alert.actions"
-                           [fill]="action.primary ? 'solid' : 'outline'"
-                           size="small"
-                           (click)="handleAlertAction(action.action)">
-                  <ion-icon [name]="action.icon" slot="start"></ion-icon>
-                  {{ action.label }}
-                </ion-button>
+              <div class="alert-body">
+                <h3 class="alert-title">{{ alert.title }}</h3>
+                <p class="alert-message">{{ alert.message }}</p>
+                <div class="alert-actions" *ngIf="alert.actions">
+                  <button *ngFor="let action of alert.actions"
+                          class="alert-button"
+                          [class.primary]="action.primary"
+                          (click)="handleAlertAction(action.action)">
+                    <ion-icon [name]="action.icon"></ion-icon>
+                    <span>{{ action.label }}</span>
+                  </button>
+                </div>
               </div>
-            </ion-card-content>
-          </ion-card>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Today's Activities -->
-      <div class="activities-section">
-        <h2 class="section-title">
-          <ion-icon name="calendar-outline"></ion-icon>
-          Aktivitas Hari Ini
-        </h2>
+      <!-- Activity Timeline & Stats -->
+      <div class="activity-section">
+        <div class="activity-grid">
+          <div class="timeline-container">
+            <div class="section-header">
+              <h2 class="section-title">Today's Schedule</h2>
+              <p class="section-subtitle">Your personalized wellness timeline</p>
+            </div>
 
-        <ion-grid>
-          <ion-row>
-            <ion-col size="12" size-lg="8">
-              <ion-card class="schedule-card">
-                <ion-card-header>
-                  <ion-card-title>Jadwal Ergonomis</ion-card-title>
-                </ion-card-header>
-                <ion-card-content>
-                  <div class="schedule-timeline">
-                    <div *ngFor="let activity of todaySchedule"
-                         class="timeline-item"
-                         [class.completed]="activity.completed"
-                         [class.current]="activity.current">
-                      <div class="timeline-time">{{ activity.time }}</div>
-                      <div class="timeline-content">
-                        <div class="activity-icon">
-                          <ion-icon [name]="activity.icon"></ion-icon>
-                        </div>
-                        <div class="activity-details">
-                          <h4>{{ activity.title }}</h4>
-                          <p>{{ activity.description }}</p>
-                        </div>
-                        <div class="activity-status">
-                          <ion-icon *ngIf="activity.completed"
-                                   name="checkmark-circle-outline"
-                                   color="success"></ion-icon>
-                          <ion-icon *ngIf="activity.current && !activity.completed"
-                                   name="flash-outline"
-                                   color="warning"></ion-icon>
-                        </div>
-                      </div>
-                    </div>
+            <div class="timeline-wrapper">
+              <div *ngFor="let activity of todaySchedule"
+                   class="timeline-item"
+                   [class.completed]="activity.completed"
+                   [class.current]="activity.current">
+                <div class="timeline-indicator">
+                  <div class="timeline-time">{{ activity.time }}</div>
+                  <div class="timeline-dot"></div>
+                </div>
+                <div class="activity-card">
+                  <div class="activity-icon">
+                    <ion-icon [name]="activity.icon"></ion-icon>
                   </div>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
-
-            <ion-col size="12" size-lg="4">
-              <ion-card class="progress-card">
-                <ion-card-header>
-                  <ion-card-title>Progress Mingguan</ion-card-title>
-                </ion-card-header>
-                <ion-card-content>
-                  <div class="weekly-stats">
-                    <div class="stat-item">
-                      <div class="stat-icon">
-                        <ion-icon name="trophy-outline"></ion-icon>
-                      </div>
-                      <div class="stat-content">
-                        <div class="stat-value">{{ weeklyStats.averageScore }}%</div>
-                        <div class="stat-label">Rata-rata Skor</div>
-                        <div class="stat-change positive">+2.3% minggu lalu</div>
-                      </div>
-                    </div>
-
-                    <div class="stat-item">
-                      <div class="stat-icon">
-                        <ion-icon name="fitness-outline"></ion-icon>
-                      </div>
-                      <div class="stat-content">
-                        <div class="stat-value">{{ weeklyStats.totalBreaks }}</div>
-                        <div class="stat-label">Total Break</div>
-                        <div class="stat-change positive">+12% minggu lalu</div>
-                      </div>
-                    </div>
-
-                    <div class="stat-item">
-                      <div class="stat-icon">
-                        <ion-icon name="shield-checkmark-outline"></ion-icon>
-                      </div>
-                      <div class="stat-content">
-                        <div class="stat-value">{{ weeklyStats.exercisesCompleted }}</div>
-                        <div class="stat-label">Latihan Selesai</div>
-                        <div class="stat-change positive">+18% minggu lalu</div>
-                      </div>
-                    </div>
+                  <div class="activity-info">
+                    <h3 class="activity-title">{{ activity.title }}</h3>
+                    <p class="activity-description">{{ activity.description }}</p>
                   </div>
-                </ion-card-content>
-              </ion-card>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+                  <div class="activity-status">
+                    <ion-icon *ngIf="activity.completed"
+                             name="checkmark-circle-outline"
+                             class="status-completed"></ion-icon>
+                    <ion-icon *ngIf="activity.current && !activity.completed"
+                             name="flash-outline"
+                             class="status-current"></ion-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-container">
+            <div class="section-header">
+              <h2 class="section-title">Weekly Progress</h2>
+              <p class="section-subtitle">Your achievement overview</p>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon trophy-icon">
+                  <ion-icon name="trophy-outline"></ion-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ weeklyStats.averageScore }}%</div>
+                  <div class="stat-label">Rata-rata Skor</div>
+                  <div class="stat-trend positive">+2.3% dari minggu lalu</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon fitness-icon">
+                  <ion-icon name="fitness-outline"></ion-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ weeklyStats.totalBreaks }}</div>
+                  <div class="stat-label">Total Break</div>
+                  <div class="stat-trend positive">+12% dari minggu lalu</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon shield-icon">
+                  <ion-icon name="shield-checkmark-outline"></ion-icon>
+                </div>
+                <div class="stat-content">
+                  <div class="stat-value">{{ weeklyStats.exercisesCompleted }}</div>
+                  <div class="stat-label">Latihan Selesai</div>
+                  <div class="stat-trend positive">+18% dari minggu lalu</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Quick Actions -->
       <div class="quick-actions-section">
-        <h2 class="section-title">
-          <ion-icon name="flash-outline"></ion-icon>
-          Aksi Cepat
-        </h2>
+        <div class="section-header">
+          <h2 class="section-title">Quick Actions</h2>
+          <p class="section-subtitle">Take immediate action for your wellness</p>
+        </div>
 
-        <ion-grid>
-          <ion-row>
-            <ion-col size="6" size-md="3">
-              <ion-button class="action-button primary-action"
-                         expand="block"
-                         (click)="startQuickBreak()">
-                <ion-icon name="pause-outline" slot="start"></ion-icon>
-                Istirahat Sekarang
-              </ion-button>
-            </ion-col>
-            <ion-col size="6" size-md="3">
-              <ion-button class="action-button secondary-action"
-                         expand="block"
-                         fill="outline">
-                <ion-icon name="body-outline" slot="start"></ion-icon>
-                Mulai Latihan
-              </ion-button>
-            </ion-col>
-            <ion-col size="6" size-md="3">
-              <ion-button class="action-button tertiary-action"
-                         expand="block"
-                         fill="outline">
-                <ion-icon name="stats-chart-outline" slot="start"></ion-icon>
-                Lihat Analytics
-              </ion-button>
-            </ion-col>
-            <ion-col size="6" size-md="3">
-              <ion-button class="action-button quaternary-action"
-                         expand="block"
-                         fill="outline">
-                <ion-icon name="settings-outline" slot="start"></ion-icon>
-                Pengaturan
-              </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+        <div class="actions-grid">
+          <button class="action-card primary-action" (click)="startQuickBreak()">
+            <div class="action-icon">
+              <ion-icon name="pause-outline"></ion-icon>
+            </div>
+            <div class="action-content">
+              <h3>Istirahat Sekarang</h3>
+              <p>Take a quick 5-minute break</p>
+            </div>
+          </button>
+
+          <button class="action-card secondary-action">
+            <div class="action-icon">
+              <ion-icon name="body-outline"></ion-icon>
+            </div>
+            <div class="action-content">
+              <h3>Mulai Latihan</h3>
+              <p>Begin posture exercises</p>
+            </div>
+          </button>
+
+          <button class="action-card tertiary-action">
+            <div class="action-icon">
+              <ion-icon name="stats-chart-outline"></ion-icon>
+            </div>
+            <div class="action-content">
+              <h3>Lihat Analytics</h3>
+              <p>Review your progress</p>
+            </div>
+          </button>
+
+          <button class="action-card quaternary-action">
+            <div class="action-icon">
+              <ion-icon name="settings-outline"></ion-icon>
+            </div>
+            <div class="action-content">
+              <h3>Pengaturan</h3>
+              <p>Customize your experience</p>
+            </div>
+          </button>
+        </div>
       </div>
     </ion-content>
   `,
   styles: [`
     :host {
-      /* Professional Color Palette */
-      --primary-color: #1e40af;
-      --primary-light: #3b82f6;
-      --primary-dark: #1e3a8a;
-      --secondary-color: #059669;
-      --tertiary-color: #d97706;
-      --accent-color: #7c3aed;
-      --success-color: #065f46;
-      --warning-color: #92400e;
-      --danger-color: #dc2626;
-      --dark-color: #111827;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-300: #d1d5db;
-      --gray-400: #9ca3af;
-      --gray-500: #6b7280;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
-      --gray-900: #111827;
-      --background-color: #f8fafc;
-      --surface-color: #ffffff;
-      --surface-elevated: #ffffff;
-      --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-      --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --card-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      --border-radius: 16px;
-      --border-radius-sm: 12px;
-      --border-radius-lg: 20px;
-      --spacing-xs: 4px;
-      --spacing-sm: 8px;
-      --spacing-md: 16px;
-      --spacing-lg: 24px;
-      --spacing-xl: 32px;
-      --spacing-2xl: 48px;
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      --primary-color: #667eea;
+      --secondary-color: #f093fb;
+      --accent-color: #4facfe;
+      --success-color: #43e97b;
+      --warning-color: #fa709a;
+      --danger-color: #ff6b6b;
+      --dark-color: #0f0f23;
+      --text-primary: #1a1a2e;
+      --text-secondary: #64748b;
+      --text-light: #94a3b8;
+      --background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      --surface: #ffffff;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+      --border-radius: 1rem;
+      --border-radius-lg: 1.5rem;
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      --spacing-2xl: 3rem;
 
       display: block;
       min-height: 100vh;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
     }
 
-    /* Mobile-Optimized Touch Interactions */
+    /* Global Styles */
     * {
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
+      box-sizing: border-box;
     }
 
-    button, .metric-card, .action-button {
-      touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    .metric-card, .alert-card, .schedule-card, .progress-card {
-      cursor: pointer;
-      -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-      tap-highlight-color: rgba(0, 0, 0, 0.1);
-    }
-
-    /* Smooth scrolling for mobile */
     .content {
+      --background: var(--background);
+      padding: var(--spacing-lg);
+      position: relative;
+      min-height: 100vh;
       -webkit-overflow-scrolling: touch;
       scroll-behavior: smooth;
     }
 
-    /* Better touch targets for mobile */
-    ion-button {
-      min-height: 44px;
-      min-width: 44px;
+    /* Background Decorations */
+    .bg-decoration {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.05;
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .status-badge, .current-time {
-      min-height: 44px;
+    .bg-decoration-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--primary-gradient);
+      top: -150px;
+      right: -150px;
+      animation-delay: 0s;
+    }
+
+    .bg-decoration-2 {
+      width: 200px;
+      height: 200px;
+      background: var(--secondary-gradient);
+      bottom: 10%;
+      left: -100px;
+      animation-delay: 2s;
+    }
+
+    .bg-decoration-3 {
+      width: 150px;
+      height: 150px;
+      background: var(--accent-gradient);
+      top: 60%;
+      right: 5%;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+
+    /* Modern Header */
+    .modern-header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .header-content {
+      background: var(--surface);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-xl);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .brand-logo {
+      position: relative;
+      width: 4rem;
+      height: 4rem;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: var(--border-radius);
+    }
+
+    .logo-glow {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      background: var(--primary-gradient);
+      border-radius: var(--border-radius);
+      opacity: 0.3;
+      filter: blur(8px);
+      z-index: -1;
+      animation: logoGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes logoGlow {
+      from { opacity: 0.3; transform: scale(1); }
+      to { opacity: 0.6; transform: scale(1.05); }
+    }
+
+    .brand-info h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0 0 0.25rem 0;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand-info p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin: 0;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-section {
+      display: flex;
+      gap: var(--spacing-md);
       align-items: center;
     }
 
-
-    /* Content Layout */
-    .content {
-      --background: var(--background-color);
-      padding: var(--spacing-2xl) var(--spacing-lg);
+    .status-card {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      font-size: 0.875rem;
+      min-height: 44px;
     }
 
-    /* Welcome Section - Professional Layout */
+    .time-card {
+      background: rgba(100, 116, 139, 0.1);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .health-card {
+      background: var(--primary-gradient);
+      color: white;
+      box-shadow: var(--shadow-md);
+    }
+
+    .health-card.success {
+      background: var(--success-gradient);
+    }
+
+    .health-card.warning {
+      background: var(--warning-gradient);
+    }
+
+    .health-card.danger {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+    }
+
     .welcome-section {
-      background: var(--surface-color);
-      border-radius: var(--border-radius-lg);
-      padding: var(--spacing-2xl);
-      margin-bottom: var(--spacing-2xl);
-      box-shadow: var(--card-shadow-lg);
-      border: 1px solid var(--gray-200);
+      text-align: center;
     }
 
-    .dashboard-header {
+    .welcome-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm) 0;
+    }
+
+    .welcome-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Section Headers */
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm) 0;
+    }
+
+    .section-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Metrics Grid */
+    .metrics-section {
+      position: relative;
+      z-index: 1;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-xl);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .metric-card:hover::before {
+      opacity: 1;
+    }
+
+    .metric-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .metric-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.3s ease;
+    }
+
+    .posture-icon {
+      background: var(--primary-gradient);
+    }
+
+    .time-icon {
+      background: var(--accent-gradient);
+    }
+
+    .break-icon {
+      background: var(--warning-gradient);
+    }
+
+    .streak-icon {
+      background: var(--success-gradient);
+    }
+
+    .metric-card:hover .metric-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .metric-trend {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--border-radius);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .metric-trend.positive {
+      background: rgba(67, 233, 123, 0.1);
+      color: var(--success-color);
+    }
+
+    .metric-content {
+      text-align: center;
+    }
+
+    .metric-value {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .metric-value .value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .metric-value .unit {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-left: var(--spacing-xs);
+    }
+
+    .metric-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .progress-container {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(226, 232, 240, 0.8);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .posture-progress {
+      background: var(--primary-gradient);
+    }
+
+    .time-progress {
+      background: var(--accent-gradient);
+    }
+
+    .progress-text {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .break-visualization,
+    .streak-visualization {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .break-dot,
+    .day-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(156, 163, 175, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .break-dot.completed,
+    .streak-day.completed .day-dot {
+      background: var(--warning-color);
+    }
+
+    .break-dot.current {
+      background: var(--warning-color);
+      transform: scale(1.2);
+      box-shadow: 0 0 0 3px rgba(250, 112, 154, 0.3);
+    }
+
+    .metric-status {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* Alerts Section */
+    .alerts-section {
+      position: relative;
+      z-index: 1;
       margin-bottom: var(--spacing-2xl);
-      padding-bottom: var(--spacing-xl);
-      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .alerts-grid {
+      display: grid;
+      gap: var(--spacing-lg);
+    }
+
+    .alert-card {
+      background: var(--surface);
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .alert-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--warning-gradient);
+    }
+
+    .alert-warning::before {
+      background: var(--warning-gradient);
+    }
+
+    .alert-danger::before {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+    }
+
+    .alert-content {
+      padding: var(--spacing-xl);
+      display: flex;
+      gap: var(--spacing-lg);
+    }
+
+    .alert-icon-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .alert-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--border-radius);
+      background: var(--warning-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .alert-priority {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--border-radius);
+      text-transform: uppercase;
+    }
+
+    .priority-warning {
+      background: rgba(250, 112, 154, 0.1);
+      color: var(--warning-color);
+    }
+
+    .priority-danger {
+      background: rgba(255, 107, 107, 0.1);
+      color: var(--danger-color);
+    }
+
+    .alert-body {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm) 0;
+    }
+
+    .alert-message {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin: 0 0 var(--spacing-lg) 0;
+      line-height: 1.5;
+    }
+
+    .alert-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+    }
+
+    .alert-button {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .alert-button.primary {
+      background: var(--primary-gradient);
+      color: white;
+      border-color: transparent;
+    }
+
+    .alert-button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Activity Section */
+    .activity-section {
+      position: relative;
+      z-index: 1;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .activity-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--spacing-2xl);
+    }
+
+    .timeline-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: var(--spacing-lg);
+      position: relative;
+    }
+
+    .timeline-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-sm);
+      flex-shrink: 0;
+    }
+
+    .timeline-time {
+      background: var(--primary-gradient);
+      color: white;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--border-radius);
+      font-size: 0.875rem;
+      font-weight: 600;
+      min-width: 80px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+    }
+
+    .timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--border-color);
+      position: relative;
+    }
+
+    .timeline-item.completed .timeline-dot {
+      background: var(--success-gradient);
+    }
+
+    .timeline-item.current .timeline-dot {
+      background: var(--warning-gradient);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 112, 154, 0.7); }
+      50% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(250, 112, 154, 0); }
+    }
+
+    .activity-card {
+      background: var(--surface);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      flex: 1;
+      transition: all 0.3s ease;
+    }
+
+    .timeline-item.completed .activity-card {
+      background: linear-gradient(135deg, rgba(67, 233, 123, 0.05) 0%, rgba(56, 249, 215, 0.05) 100%);
+      border-color: rgba(67, 233, 123, 0.2);
+    }
+
+    .timeline-item.current .activity-card {
+      background: linear-gradient(135deg, rgba(250, 112, 154, 0.05) 0%, rgba(254, 225, 64, 0.05) 100%);
+      border-color: rgba(250, 112, 154, 0.2);
+    }
+
+    .activity-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .activity-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--border-radius);
+      background: var(--primary-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .activity-info {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-xs) 0;
+    }
+
+    .activity-description {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .activity-status {
+      flex-shrink: 0;
+    }
+
+    .status-completed {
+      color: var(--success-color);
+      font-size: 1.5rem;
+    }
+
+    .status-current {
+      color: var(--warning-color);
+      font-size: 1.5rem;
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .stats-grid {
+      display: grid;
+      gap: var(--spacing-lg);
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .stat-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .trophy-icon {
+      background: var(--warning-gradient);
+    }
+
+    .fitness-icon {
+      background: var(--accent-gradient);
+    }
+
+    .shield-icon {
+      background: var(--success-gradient);
+    }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-xs) 0;
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin: 0 0 var(--spacing-xs) 0;
+    }
+
+    .stat-trend {
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .stat-trend.positive {
+      color: var(--success-color);
+    }
+
+    /* Quick Actions */
+    .quick-actions-section {
+      position: relative;
+      z-index: 1;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .action-card {
+      background: var(--surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-xl);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      min-height: 100px;
+    }
+
+    .action-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .action-card:hover::before {
+      left: 100%;
+    }
+
+    .action-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .primary-action {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-color: rgba(102, 126, 234, 0.2);
+    }
+
+    .primary-action:hover {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    }
+
+    .secondary-action {
+      background: linear-gradient(135deg, rgba(240, 147, 251, 0.05) 0%, rgba(245, 87, 108, 0.05) 100%);
+      border-color: rgba(240, 147, 251, 0.2);
+    }
+
+    .tertiary-action {
+      background: linear-gradient(135deg, rgba(79, 172, 254, 0.05) 0%, rgba(0, 242, 254, 0.05) 100%);
+      border-color: rgba(79, 172, 254, 0.2);
+    }
+
+    .quaternary-action {
+      background: linear-gradient(135deg, rgba(67, 233, 123, 0.05) 0%, rgba(56, 249, 215, 0.05) 100%);
+      border-color: rgba(67, 233, 123, 0.2);
+    }
+
+    .action-icon {
+      width: 3rem;
+      height: 3rem;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+    }
+
+    .primary-action .action-icon {
+      background: var(--primary-gradient);
+    }
+
+    .secondary-action .action-icon {
+      background: var(--secondary-gradient);
+    }
+
+    .tertiary-action .action-icon {
+      background: var(--accent-gradient);
+    }
+
+    .quaternary-action .action-icon {
+      background: var(--success-gradient);
+    }
+
+    .action-card:hover .action-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .action-content h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-xs) 0;
+    }
+
+    .action-content p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Mobile Responsive Design */
+    @media (max-width: 1024px) {
+      .activity-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding: var(--spacing-md);
+      }
+
+      .modern-header {
+        margin-bottom: var(--spacing-xl);
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        padding: var(--spacing-lg);
+        text-align: center;
+      }
+
+      .brand-section {
+        justify-content: center;
+      }
+
+      .status-section {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        width: 100%;
+      }
+
+      .status-card {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .welcome-title {
+        font-size: 1.5rem;
+      }
+
+      .welcome-subtitle {
+        font-size: 0.875rem;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+      }
+
+      .metric-card {
+        padding: var(--spacing-lg);
+      }
+
+      .metric-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+      }
+
+      .timeline-item {
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      .timeline-indicator {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .activity-card {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+      }
+
+      .alert-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-md);
+      }
+
+      .alert-actions {
+        justify-content: center;
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .action-card {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-md);
+        padding: var(--spacing-lg);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content {
+        padding: var(--spacing-sm);
+      }
+
+      .brand-logo {
+        width: 3rem;
+        height: 3rem;
+      }
+
+      .brand-info h1 {
+        font-size: 1.5rem;
+      }
+
+      .welcome-title {
+        font-size: 1.25rem;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+      }
+
+      .metric-value .value {
+        font-size: 2rem;
+      }
+
+      .metric-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.25rem;
+      }
+
+      .timeline-time {
+        font-size: 0.75rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        min-width: 60px;
+      }
+
+      .activity-icon {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+      }
+
+      .action-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.25rem;
+      }
     }
 
     .brand-section {

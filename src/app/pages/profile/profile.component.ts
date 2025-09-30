@@ -27,10 +27,12 @@ import {
   flaskOutline,
   analyticsOutline,
   trendingUpOutline,
-  removeOutline
+  removeOutline,
+  logOutOutline
 } from 'ionicons/icons';
 import { ProfileService, ErgoFitUserProfile } from '../../services/profile.service';
 import { SampleDataService } from '../../services/sample-data.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -75,9 +77,14 @@ import { SampleDataService } from '../../services/sample-data.service';
               </div>
             </div>
 
-            <ion-button class="settings-btn" fill="clear" (click)="navigateToSettings()">
-              <ion-icon name="settings-outline"></ion-icon>
-            </ion-button>
+            <div class="header-actions">
+              <ion-button class="action-btn" fill="clear" (click)="navigateToSettings()">
+                <ion-icon name="settings-outline"></ion-icon>
+              </ion-button>
+              <ion-button class="action-btn logout-btn" fill="clear" (click)="logout()">
+                <ion-icon name="log-out-outline"></ion-icon>
+              </ion-button>
+            </div>
           </div>
         </div>
 
@@ -387,7 +394,13 @@ import { SampleDataService } from '../../services/sample-data.service';
       color: var(--text-light);
     }
 
-    .settings-btn {
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .action-btn {
       --color: var(--text-secondary);
       --background: transparent;
       --border-radius: var(--radius-md);
@@ -396,9 +409,18 @@ import { SampleDataService } from '../../services/sample-data.service';
       transition: all 0.2s ease;
     }
 
-    .settings-btn:hover {
+    .action-btn:hover {
       --background: var(--background-tertiary);
       --color: var(--text-primary);
+    }
+
+    .logout-btn {
+      --color: var(--danger-color);
+    }
+
+    .logout-btn:hover {
+      --background: rgba(239, 68, 68, 0.1);
+      --color: var(--danger-color);
     }
 
     /* ===== MAIN CONTENT ===== */
@@ -823,6 +845,11 @@ import { SampleDataService } from '../../services/sample-data.service';
         text-align: center;
       }
 
+      .header-actions {
+        margin-top: 16px;
+        order: 3;
+      }
+
       .profile-info {
         flex-direction: column;
         text-align: center;
@@ -886,7 +913,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private router: Router,
     private profileService: ProfileService,
-    private sampleDataService: SampleDataService
+    private sampleDataService: SampleDataService,
+    private authService: AuthService
   ) {
     addIcons({
       'person-outline': personOutline,
@@ -906,7 +934,8 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
       'eye-outline': eyeOutline,
       'flask-outline': flaskOutline,
       'trending-up-outline': trendingUpOutline,
-      'remove-outline': removeOutline
+      'remove-outline': removeOutline,
+      'log-out-outline': logOutOutline
     });
   }
 
@@ -930,6 +959,19 @@ export class ProfileComponent implements OnInit, AfterViewInit, OnDestroy {
 
   navigateToSettings() {
     this.router.navigate(['/profile/settings']);
+  }
+
+  async logout() {
+    const confirmed = confirm('Apakah Anda yakin ingin keluar dari aplikasi?');
+    if (confirmed) {
+      try {
+        await this.authService.signOut();
+        this.router.navigate(['/auth/login']);
+      } catch (error) {
+        console.error('Error during logout:', error);
+        alert('Gagal logout. Silakan coba lagi.');
+      }
+    }
   }
 
   getPointsProgress(): number {
