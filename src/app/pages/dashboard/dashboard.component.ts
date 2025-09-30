@@ -75,200 +75,183 @@ import {
     IonCol
   ],
   template: `
-    <!-- Aurora Background -->
-    <div class="aurora-mesh-bg">
-      <div class="aurora-orb aurora-orb-1"></div>
-      <div class="aurora-orb aurora-orb-2"></div>
-      <div class="aurora-orb aurora-orb-3"></div>
-      <div class="aurora-particles">
-        <div class="aurora-particle" *ngFor="let particle of particles" 
-             [style.animation-delay]="particle.delay + 's'"
-             [style.animation-duration]="particle.duration + 's'"></div>
-      </div>
-    </div>
-
-    <ion-content class="aurora-content" [fullscreen]="true" [scrollEvents]="true">
-      <!-- Aurora Header -->  
-      <div class="aurora-header">
-        <div class="aurora-header-glow"></div>
-        <div class="aurora-header-content">
-          <div class="aurora-brand-section">
-            <div class="aurora-logo-container">
-              <div class="aurora-logo-rings">
-                <div class="aurora-ring aurora-ring-1"></div>
-                <div class="aurora-ring aurora-ring-2"></div>
-                <div class="aurora-ring aurora-ring-3"></div>
+    <ion-content class="dashboard-content" [fullscreen]="true" [scrollEvents]="true">
+      <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+          <div class="header-content">
+            <div class="brand-section">
+              <div class="brand-logo">
+                <img src="assets/logo/logo ergofit.jpg" alt="ErgoFit Logo" class="logo-image">
               </div>
-              <img src="assets/logo/logo ergofit.jpg" alt="ErgoFit Logo" class="aurora-logo">
+              <div class="brand-info">
+                <h1 class="brand-title">ErgoFit</h1>
+                <p class="brand-subtitle">AI-Powered Posture Intelligence</p>
+              </div>
             </div>
-            <div class="aurora-brand-info">
-              <h1 class="aurora-brand-title">ErgoFit</h1>
-              <p class="aurora-brand-subtitle">AI-Powered Posture Intelligence</p>
+
+            <div class="status-section">
+              <div class="status-card time-card">
+                <div class="status-icon">
+                  <ion-icon name="time-outline"></ion-icon>
+                </div>
+                <div class="status-content">
+                  <span class="status-value">{{ getCurrentTime() }}</span>
+                  <span class="status-label">Waktu Saat Ini</span>
+                </div>
+              </div>
+              <div class="status-card health-card" [class]="getStatusColor() + '-status'">
+                <div class="status-icon">
+                  <ion-icon name="heart-outline"></ion-icon>
+                </div>
+                <div class="status-content">
+                  <span class="status-value">{{ currentStatusText }}</span>
+                  <span class="status-label">Status Kesehatan</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="aurora-status-section">
-            <div class="aurora-status-card aurora-time-card">
-              <div class="aurora-status-icon">
-                <ion-icon name="time-outline"></ion-icon>
+          <div class="welcome-section">
+            <h2 class="welcome-title">Selamat {{ getGreeting() }}, {{ userName }}!</h2>
+            <p class="welcome-subtitle">Mari tingkatkan postur dan kesehatan Anda hari ini</p>
+          </div>
+        </div>
+
+        <!-- Metrics Section -->
+        <div class="metrics-section">
+          <div class="section-header">
+            <h2 class="section-title">Dashboard Metrics</h2>
+            <p class="section-subtitle">Real-time insights into your posture and wellness</p>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card posture-card">
+              <div class="metric-header">
+                <div class="metric-icon posture-icon">
+                  <ion-icon name="body-outline"></ion-icon>
+                </div>
+                <div class="metric-trend positive">
+                  <ion-icon name="trending-up-outline"></ion-icon>
+                  <span>+{{ trendValue }}%</span>
+                </div>
               </div>
-              <div class="aurora-status-content">
-                <span class="aurora-status-value">{{ getCurrentTime() }}</span>
-                <span class="aurora-status-label">Waktu Saat Ini</span>
+              <div class="metric-content">
+                <div class="metric-value">
+                  <span class="value">{{ postureScore }}</span>
+                  <span class="unit">%</span>
+                </div>
+                <div class="metric-label">Skor Postur</div>
+                <div class="progress-container">
+                  <div class="progress-track">
+                    <div class="progress-fill posture-progress" [style.width.%]="postureScore"></div>
+                  </div>
+                  <span class="progress-text">{{ getPostureStatus() }}</span>
+                </div>
               </div>
             </div>
-            <div class="aurora-status-card aurora-health-card" [class]="'aurora-' + getStatusColor()">
-              <div class="aurora-status-icon">
-                <ion-icon name="heart-outline"></ion-icon>
+
+            <div class="metric-card time-card">
+              <div class="metric-header">
+                <div class="metric-icon time-icon">
+                  <ion-icon name="timer-outline"></ion-icon>
+                </div>
               </div>
-              <div class="aurora-status-content">
-                <span class="aurora-status-value">{{ currentStatusText }}</span>
-                <span class="aurora-status-label">Status Kesehatan</span>
+              <div class="metric-content">
+                <div class="metric-value">
+                  <span class="value">{{ activeHours }}</span>
+                  <span class="unit">jam</span>
+                </div>
+                <div class="metric-label">Waktu Aktif</div>
+                <div class="progress-container">
+                  <div class="progress-track">
+                    <div class="progress-fill time-progress" [style.width.%]="timeProgressPercent"></div>
+                  </div>
+                  <span class="progress-text">{{ timeProgressPercent }}% dari target</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card break-card">
+              <div class="metric-header">
+                <div class="metric-icon break-icon">
+                  <ion-icon name="cafe-outline"></ion-icon>
+                </div>
+              </div>
+              <div class="metric-content">
+                <div class="metric-value">
+                  <span class="value">{{ breaksToday }}</span>
+                  <span class="unit">/8</span>
+                </div>
+                <div class="metric-label">Break Diambil</div>
+                <div class="break-visualization">
+                  <div *ngFor="let i of breakNumbers"
+                       class="break-dot"
+                       [class.completed]="i <= breaksToday"
+                       [class.current]="i === breaksToday + 1">
+                  </div>
+                </div>
+                <span class="metric-status">{{ getBreakStatus() }}</span>
+              </div>
+            </div>
+
+            <div class="metric-card streak-card">
+              <div class="metric-header">
+                <div class="metric-icon streak-icon">
+                  <ion-icon name="star-outline"></ion-icon>
+                </div>
+              </div>
+              <div class="metric-content">
+                <div class="metric-value">
+                  <span class="value">{{ streakDays }}</span>
+                  <span class="unit">hari</span>
+                </div>
+                <div class="metric-label">Streak Terbaik</div>
+                <div class="streak-visualization">
+                  <div *ngFor="let day of recentDays"
+                       class="streak-day"
+                       [class.completed]="day.completed">
+                    <div class="day-dot"></div>
+                  </div>
+                </div>
+                <span class="metric-status">Konsistensi Excellent!</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="aurora-welcome-section">
-          <h2 class="aurora-welcome-title">Selamat {{ getGreeting() }}, {{ userName }}!</h2>
-          <p class="aurora-welcome-subtitle">Mari tingkatkan postur dan kesehatan Anda hari ini</p>
-          <div class="aurora-welcome-glow"></div>
-        </div>
-      </div>
-
-      <!-- Modern Metrics Grid -->
-      <div class="metrics-section">
-        <div class="section-header">
-          <h2 class="section-title">Dashboard Metrics</h2>
-          <p class="section-subtitle">Real-time insights into your posture and wellness</p>
-        </div>
-
-        <div class="metrics-grid">
-          <div class="metric-card posture-card">
-            <div class="metric-header">
-              <div class="metric-icon posture-icon">
-                <ion-icon name="body-outline"></ion-icon>
-              </div>
-              <div class="metric-trend positive">
-                <ion-icon name="trending-up-outline"></ion-icon>
-                <span>+{{ trendValue }}%</span>
-              </div>
-            </div>
-            <div class="metric-content">
-              <div class="metric-value">
-                <span class="value">{{ postureScore }}</span>
-                <span class="unit">%</span>
-              </div>
-              <div class="metric-label">Skor Postur</div>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill posture-progress" [style.width.%]="postureScore"></div>
-                </div>
-                <span class="progress-text">{{ getPostureStatus() }}</span>
-              </div>
-            </div>
+        <!-- Smart Alerts -->
+        <div class="alerts-section" *ngIf="currentAlerts.length > 0">
+          <div class="section-header">
+            <h2 class="section-title">Smart Alerts</h2>
+            <p class="section-subtitle">AI-powered recommendations for your wellness</p>
           </div>
 
-          <div class="metric-card time-card">
-            <div class="metric-header">
-              <div class="metric-icon time-icon">
-                <ion-icon name="timer-outline"></ion-icon>
-              </div>
-            </div>
-            <div class="metric-content">
-              <div class="metric-value">
-                <span class="value">{{ activeHours }}</span>
-                <span class="unit">jam</span>
-              </div>
-              <div class="metric-label">Waktu Aktif</div>
-              <div class="progress-container">
-                <div class="progress-bar">
-                  <div class="progress-fill time-progress" [style.width.%]="timeProgressPercent"></div>
+          <div class="alerts-grid">
+            <div *ngFor="let alert of currentAlerts"
+                 class="alert-card"
+                 [class]="'alert-' + alert.type">
+              <div class="alert-content">
+                <div class="alert-icon-container">
+                  <div class="alert-icon">
+                    <ion-icon [name]="alert.icon"></ion-icon>
+                  </div>
+                  <div class="alert-priority" [class]="'priority-' + alert.type">
+                    {{ alert.priority }}
+                  </div>
                 </div>
-                <span class="progress-text">{{ timeProgressPercent }}% dari target</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="metric-card break-card">
-            <div class="metric-header">
-              <div class="metric-icon break-icon">
-                <ion-icon name="cafe-outline"></ion-icon>
-              </div>
-            </div>
-            <div class="metric-content">
-              <div class="metric-value">
-                <span class="value">{{ breaksToday }}</span>
-                <span class="unit">/8</span>
-              </div>
-              <div class="metric-label">Break Diambil</div>
-              <div class="break-visualization">
-                <div *ngFor="let i of breakNumbers"
-                     class="break-dot"
-                     [class.completed]="i <= breaksToday"
-                     [class.current]="i === breaksToday + 1">
-                </div>
-              </div>
-              <span class="metric-status">{{ getBreakStatus() }}</span>
-            </div>
-          </div>
-
-          <div class="metric-card streak-card">
-            <div class="metric-header">
-              <div class="metric-icon streak-icon">
-                <ion-icon name="star-outline"></ion-icon>
-              </div>
-            </div>
-            <div class="metric-content">
-              <div class="metric-value">
-                <span class="value">{{ streakDays }}</span>
-                <span class="unit">hari</span>
-              </div>
-              <div class="metric-label">Streak Terbaik</div>
-              <div class="streak-visualization">
-                <div *ngFor="let day of recentDays"
-                     class="streak-day"
-                     [class.completed]="day.completed">
-                  <div class="day-dot"></div>
-                </div>
-              </div>
-              <span class="metric-status">Konsistensi Excellent!</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Smart Alerts -->
-      <div class="alerts-section" *ngIf="currentAlerts.length > 0">
-        <div class="section-header">
-          <h2 class="section-title">Smart Alerts</h2>
-          <p class="section-subtitle">AI-powered recommendations for your wellness</p>
-        </div>
-
-        <div class="alerts-grid">
-          <div *ngFor="let alert of currentAlerts"
-               class="alert-card modern-alert"
-               [class]="'alert-' + alert.type">
-            <div class="alert-content">
-              <div class="alert-icon-container">
-                <div class="alert-icon">
-                  <ion-icon [name]="alert.icon"></ion-icon>
-                </div>
-                <div class="alert-priority" [class]="'priority-' + alert.type">
-                  {{ alert.priority }}
-                </div>
-              </div>
-              <div class="alert-body">
-                <h3 class="alert-title">{{ alert.title }}</h3>
-                <p class="alert-message">{{ alert.message }}</p>
-                <div class="alert-actions" *ngIf="alert.actions">
-                  <button *ngFor="let action of alert.actions"
-                          class="alert-button"
-                          [class.primary]="action.primary"
-                          (click)="handleAlertAction(action.action)">
-                    <ion-icon [name]="action.icon"></ion-icon>
-                    <span>{{ action.label }}</span>
-                  </button>
+                <div class="alert-body">
+                  <h3 class="alert-title">{{ alert.title }}</h3>
+                  <p class="alert-message">{{ alert.message }}</p>
+                  <div class="alert-actions" *ngIf="alert.actions">
+                    <button *ngFor="let action of alert.actions"
+                            class="alert-button"
+                            [class.primary]="action.primary"
+                            (click)="handleAlertAction(action.action)">
+                      <ion-icon [name]="action.icon"></ion-icon>
+                      <span>{{ action.label }}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -412,30 +395,32 @@ import {
   `,
   styles: [`
     :host {
-      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-      --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-      --primary-color: #667eea;
-      --secondary-color: #f093fb;
-      --accent-color: #4facfe;
-      --success-color: #43e97b;
-      --warning-color: #fa709a;
-      --danger-color: #ff6b6b;
-      --dark-color: #0f0f23;
-      --text-primary: #1a1a2e;
-      --text-secondary: #64748b;
-      --text-light: #94a3b8;
-      --background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      --surface: #ffffff;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-      --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-      --border-radius: 1rem;
-      --border-radius-lg: 1.5rem;
+      /* ErgoFit Professional Color Palette */
+      --primary-color: #2563eb;
+      --primary-light: #3b82f6;
+      --primary-dark: #1e40af;
+      --secondary-color: #059669;
+      --accent-color: #06b6d4;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-light: #9ca3af;
+      --background-primary: #ffffff;
+      --background-secondary: #f8fafc;
+      --background-tertiary: #f1f5f9;
+      --border-color: #e5e7eb;
+      --border-light: #f3f4f6;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-2xl: 20px;
       --spacing-xs: 0.25rem;
       --spacing-sm: 0.5rem;
       --spacing-md: 1rem;
@@ -445,25 +430,22 @@ import {
 
       display: block;
       min-height: 100vh;
+      background: var(--background-secondary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
     }
 
-    /* Global Styles */
-    * {
-      -webkit-tap-highlight-color: transparent;
-      -webkit-touch-callout: none;
-      box-sizing: border-box;
+    /* Content Layout */
+    .dashboard-content {
+      --background: var(--background-secondary);
+      --color: var(--text-primary);
     }
 
-    .content {
-      --background: var(--background);
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
       padding: var(--spacing-lg);
-      position: relative;
-      min-height: 100vh;
-      -webkit-overflow-scrolling: touch;
-      scroll-behavior: smooth;
     }
 
     /* Background Decorations */
